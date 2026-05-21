@@ -2,4 +2,4 @@
 # openpyxl/Pillow se usan solo para scripts locales de importacion y assets.
 openpyxl==3.1.5
 Pillow==10.4.0
-psycopg[binary]==3.2.3
+psycopg[binary]

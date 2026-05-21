@@ -43,11 +43,19 @@ def connect():
 
 
 def execute(conn, sql: str, params: tuple | list = ()):
-    return conn.execute(sql_params(sql), params)
+    if IS_POSTGRES:
+        cur = conn.cursor()
+        cur.execute(sql_params(sql), params)
+        return cur
+    return conn.execute(sql, params)
 
 
 def executemany(conn, sql: str, rows: list[tuple]) -> None:
-    conn.executemany(sql_params(sql), rows)
+    if IS_POSTGRES:
+        cur = conn.cursor()
+        cur.executemany(sql_params(sql), rows)
+        return
+    conn.executemany(sql, rows)
 
 
 def run_script(conn, script: str) -> None:
@@ -57,7 +65,7 @@ def run_script(conn, script: str) -> None:
     for statement in script.split(";"):
         statement = statement.strip()
         if statement:
-            conn.execute(statement)
+            execute(conn, statement)
 
 
 def begin_write(conn) -> None:

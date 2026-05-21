@@ -504,6 +504,38 @@ select {
   gap: 12px;
 }
 
+.home-module,
+.placeholder-module,
+.movements-module {
+  padding: 18px;
+  overflow-y: auto;
+}
+
+.home-module-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home-module-grid article {
+  min-height: 130px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  background: #f8fafc;
+}
+
+.home-module-grid strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.home-module-grid span {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
 .sales-kpis {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1385,7 +1417,9 @@ body:not(.locked)[data-module="ajustes"] .placeholder-module.is-active {
 }
 
 body:not(.locked)[data-module="dashboard"] .workspace-scroll,
+body:not(.locked)[data-module="inicio"] .workspace-scroll,
 body:not(.locked)[data-module="movimientos"] .workspace-scroll,
+body:not(.locked)[data-module="stock"] .workspace-scroll,
 body:not(.locked)[data-module="usuarios"] .workspace-scroll,
 body:not(.locked)[data-module="ajustes"] .workspace-scroll {
   grid-template-rows: minmax(0, 1fr);
@@ -1394,6 +1428,10 @@ body:not(.locked)[data-module="ajustes"] .workspace-scroll {
 body:not(.locked)[data-module="productos"] .workspace-scroll,
 body:not(.locked)[data-module="venta"] .workspace-scroll {
   grid-template-rows: minmax(260px, 44%) minmax(0, 1fr);
+}
+
+body:not(.locked):not([data-module="productos"]):not([data-module="venta"]) .catalog-search {
+  display: none;
 }
 
 html {
@@ -1570,7 +1608,9 @@ body:not(.locked)[data-module="venta"] .workspace {
 }
 
 body:not(.locked)[data-module="dashboard"] .workspace-scroll,
+body:not(.locked)[data-module="inicio"] .workspace-scroll,
 body:not(.locked)[data-module="movimientos"] .workspace-scroll,
+body:not(.locked)[data-module="stock"] .workspace-scroll,
 body:not(.locked)[data-module="usuarios"] .workspace-scroll,
 body:not(.locked)[data-module="ajustes"] .workspace-scroll {
   grid-template-rows: minmax(0, 1fr);
@@ -1579,4 +1619,27 @@ body:not(.locked)[data-module="ajustes"] .workspace-scroll {
 body:not(.locked)[data-module="productos"] .workspace-scroll,
 body:not(.locked)[data-module="venta"] .workspace-scroll {
   grid-template-rows: minmax(260px, 44%) minmax(0, 1fr);
+}
+
+body:not(.locked):not([data-module="productos"]):not([data-module="venta"]) .catalog-search {
+  display: none;
+}
+
+body:not(.locked) .module-screen.is-active {
+  display: block !important;
+}
+
+body:not(.locked) .sales-dashboard.module-screen.is-active,
+body:not(.locked) .product-dashboard.module-screen.is-active {
+  display: block !important;
+}
+
+body:not(.locked) .search-panel.module-screen.is-active {
+  display: flex !important;
+}
+
+@media (max-width: 960px) {
+  .home-module-grid {
+    grid-template-columns: 1fr;
+  }
 }

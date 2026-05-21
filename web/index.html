@@ -22,7 +22,7 @@
             <p class="eyebrow">Repuestos para frenos y embragues</p>
             <h1>Catálogo inteligente Frenos Coronel Diaz SA</h1>
             <p>
-              Busqueda rapida por codigo, marca, proveedor, categoria o aplicacion. Stock, ventas y gestion empresarial en un solo sistema.
+              Búsqueda rápida por código, marca, proveedor, categoría o aplicación. Stock, ventas y gestión empresarial en un solo sistema.
             </p>
             <div class="home-search">
               <input type="search" placeholder="Buscar: pastillas corsa, flexible, bomba freno, PD145..." />
@@ -96,7 +96,11 @@
           <span>Menu</span>
           <strong>FCD</strong>
         </div>
-        <button class="menu-item active" type="button" data-view="dashboard">
+        <button class="menu-item active" type="button" data-view="inicio">
+          <span class="menu-icon">I</span>
+          <span>Inicio</span>
+        </button>
+        <button class="menu-item" type="button" data-view="dashboard">
           <span class="menu-icon">D</span>
           <span>Dashboard</span>
         </button>
@@ -107,6 +111,10 @@
         <button class="menu-item" type="button" data-view="productos">
           <span class="menu-icon">P</span>
           <span>Productos</span>
+        </button>
+        <button class="menu-item" type="button" data-view="stock">
+          <span class="menu-icon">S</span>
+          <span>Stock</span>
         </button>
         <button class="menu-item admin-only" type="button" data-view="movimientos">
           <span class="menu-icon">M</span>
@@ -120,7 +128,7 @@
           <span class="menu-icon">A</span>
           <span>Ajustes</span>
         </button>
-        <div class="menu-note" id="menuNote">Módulo actual: Dashboard.</div>
+        <div class="menu-note" id="menuNote">Módulo actual: Inicio.</div>
       </nav>
 
       <section class="workspace">
@@ -148,6 +156,29 @@
         </section>
 
         <div class="workspace-scroll">
+          <section class="panel home-module module-screen is-active" data-module="inicio">
+            <div class="section-head">
+              <div>
+                <h2>Inicio</h2>
+                <p>Panel principal del sistema ERP de Frenos Coronel Diaz SA.</p>
+              </div>
+            </div>
+            <div class="home-module-grid">
+              <article>
+                <strong>Catálogo</strong>
+                <span>Buscá productos, marcas, proveedores y categorías desde el módulo Productos.</span>
+              </article>
+              <article>
+                <strong>Ventas</strong>
+                <span>Operá ventas y salidas desde el módulo Ventas.</span>
+              </article>
+              <article>
+                <strong>Control</strong>
+                <span>Revisá indicadores y estado general desde Dashboard.</span>
+              </article>
+            </div>
+          </section>
+
           <section class="panel search-panel module-screen" data-module="productos">
             <div class="section-head">
               <div>
@@ -230,7 +261,6 @@
             <h2>Ventas</h2>
             <p>Venta con carrito, salida de productos, ranking y últimas operaciones.</p>
           </div>
-          <button id="closeSalesDashboard" class="secondary-button" type="button">Cerrar</button>
         </div>
         <div class="cart-sale">
           <section class="cart-box">
@@ -277,7 +307,7 @@
             <div id="topSalesList" class="rank-list"></div>
           </section>
           <section>
-            <h3>Ultimas ventas</h3>
+            <h3>Últimas ventas</h3>
             <div id="recentSalesList" class="rank-list"></div>
           </section>
         </div>
@@ -289,9 +319,8 @@
             <h2>Productos</h2>
             <p>Editar ficha, proveedor, categoría, descripción y ubicación física.</p>
           </div>
-          <button id="closeProductDashboard" class="secondary-button" type="button">Cerrar</button>
         </div>
-        <div id="productEditorEmpty" class="empty-state">Selecciona un producto del catalogo para editarlo.</div>
+        <div id="productEditorEmpty" class="empty-state">Seleccioná un producto del catálogo para editarlo.</div>
         <form id="productEditorForm" class="product-editor is-hidden">
           <label>
             Código interno
@@ -345,6 +374,16 @@
               <div>
                 <h2>Usuarios</h2>
                 <p>Administración de usuarios y permisos. Pendiente de aprobación de la base visual.</p>
+              </div>
+            </div>
+            <div class="empty-state">Este módulo se activará cuando apruebes la Etapa 1.</div>
+          </section>
+
+          <section class="panel placeholder-module module-screen" data-module="stock">
+            <div class="section-head">
+              <div>
+                <h2>Stock</h2>
+                <p>Control de existencias. Pendiente de aprobación de la base visual.</p>
               </div>
             </div>
             <div class="empty-state">Este módulo se activará cuando apruebes la Etapa 1.</div>

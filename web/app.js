@@ -202,7 +202,7 @@ function fillProductEditor(product) {
 async function registerSale(event) {
   event.preventDefault();
   if (!state.selected) {
-    setMessage("Selecciona un producto antes de vender.", "error");
+    setMessage("Seleccioná un producto antes de vender.", "error");
     return;
   }
 
@@ -243,7 +243,7 @@ async function registerSale(event) {
 
 function addToCart(product) {
   if (!product) {
-    setCartMessage("Selecciona un producto del catalogo.", "error");
+    setCartMessage("Seleccioná un producto del catálogo.", "error");
     return;
   }
   if (Number(product.stock) <= 0) {
@@ -266,7 +266,7 @@ function renderCart() {
   cartSummary.textContent = `${totalItems} productos | ${totalUnits} unidades`;
 
   if (state.cart.length === 0) {
-    cartItems.innerHTML = `<div class="empty-state">Selecciona productos del catalogo y agregalos al carrito.</div>`;
+    cartItems.innerHTML = `<div class="empty-state">Seleccioná productos del catálogo y agregalos al carrito.</div>`;
     return;
   }
 
@@ -384,7 +384,7 @@ function unlockApp(user) {
   document.body.classList.remove("locked");
   userLabel.textContent = `${user.nombre} (${user.rol})`;
   updateMenuByRole();
-  setActiveMenu("dashboard");
+  setActiveMenu("inicio");
 }
 
 function updateMenuByRole() {
@@ -403,9 +403,11 @@ function setActiveMenu(view) {
   });
 
   const notes = {
+    inicio: "Módulo actual: inicio del sistema.",
     dashboard: "Módulo actual: tablero ejecutivo y control general.",
     venta: "Módulo actual: ventas y descuento de stock.",
     productos: "Módulo actual: catálogo y edición de productos.",
+    stock: "Módulo actual: control de stock.",
     movimientos: "Movimientos: historial disponible para administrador.",
     usuarios: "Usuarios: módulo pendiente de habilitación.",
     ajustes: "Ajustes: módulo pendiente de configuración.",
@@ -501,7 +503,7 @@ async function loadSalesSummary() {
 async function saveProduct(event) {
   event.preventDefault();
   if (!state.selected) {
-    productEditorMessage.textContent = "Selecciona un producto primero.";
+    productEditorMessage.textContent = "Seleccioná un producto primero.";
     productEditorMessage.className = "message error";
     return;
   }
@@ -541,7 +543,7 @@ async function saveProduct(event) {
 
 function renderTopSales(rows) {
   if (rows.length === 0) {
-    topSalesList.innerHTML = `<div class="empty-state">Todavia no hay ventas registradas.</div>`;
+    topSalesList.innerHTML = `<div class="empty-state">Todavía no hay ventas registradas.</div>`;
     return;
   }
   topSalesList.innerHTML = rows
@@ -562,7 +564,7 @@ function renderTopSales(rows) {
 
 function renderRecentSales(rows) {
   if (rows.length === 0) {
-    recentSalesList.innerHTML = `<div class="empty-state">Todavia no hay ventas registradas.</div>`;
+    recentSalesList.innerHTML = `<div class="empty-state">Todavía no hay ventas registradas.</div>`;
     return;
   }
   recentSalesList.innerHTML = rows

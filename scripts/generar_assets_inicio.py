@@ -40,6 +40,20 @@ def draw_hose(draw: ImageDraw.ImageDraw, x: int, y: int) -> None:
     draw.rectangle((x + 220, y + 57, x + 262, y + 83), fill=(226, 232, 240))
 
 
+def draw_master_cylinder(draw: ImageDraw.ImageDraw, x: int, y: int) -> None:
+    draw.rounded_rectangle((x + 20, y + 42, x + 180, y + 92), radius=14, fill=(226, 232, 240))
+    draw.rounded_rectangle((x + 52, y + 10, x + 136, y + 48), radius=12, fill=(248, 250, 252))
+    draw.rectangle((x + 4, y + 54, x + 28, y + 80), fill=(148, 163, 184))
+    draw.rectangle((x + 178, y + 56, x + 230, y + 78), fill=(148, 163, 184))
+    draw.ellipse((x + 58, y + 52, x + 100, y + 94), fill=(15, 23, 42))
+    draw.ellipse((x + 105, y + 52, x + 147, y + 94), fill=(15, 23, 42))
+
+
+def draw_clutch(draw: ImageDraw.ImageDraw, x: int, y: int) -> None:
+    draw_master_cylinder(draw, x, y)
+    draw_hose(draw, x - 10, y + 62)
+
+
 def make_card(filename: str, title: str, subtitle: str, accent: tuple[int, int, int], kind: str) -> None:
     img = Image.new("RGB", (640, 360), (15, 23, 42))
     draw = ImageDraw.Draw(img)
@@ -58,6 +72,10 @@ def make_card(filename: str, title: str, subtitle: str, accent: tuple[int, int, 
         draw_caliper(draw, 365, 105)
     elif kind == "hose":
         draw_hose(draw, 330, 110)
+    elif kind == "hydraulic":
+        draw_master_cylinder(draw, 360, 105)
+    elif kind == "clutch":
+        draw_clutch(draw, 345, 95)
     elif kind == "box":
         draw.rounded_rectangle((365, 90, 555, 230), radius=18, fill=(226, 232, 240))
         draw.rectangle((386, 122, 534, 160), fill=accent)
@@ -68,17 +86,17 @@ def make_card(filename: str, title: str, subtitle: str, accent: tuple[int, int, 
     draw.text((36, 42), title.upper(), fill=(255, 255, 255), font=font(36, True))
     draw.text((38, 96), subtitle, fill=(203, 213, 225), font=font(20))
     draw.rounded_rectangle((38, 260, 220, 306), radius=8, fill=accent)
-    draw.text((58, 270), "VER CATALOGO", fill=(255, 255, 255), font=font(16, True))
+    draw.text((58, 270), "VER CATÁLOGO", fill=(255, 255, 255), font=font(16, True))
     img.save(ASSETS / filename, "PNG", optimize=True)
 
 
 def main() -> None:
-    make_card("hidraulica.png", "Hidraulica", "Bombas, bombines y cilindros", (15, 118, 110), "disc")
-    make_card("friccion.png", "Friccion", "Pastillas, discos y campanas", (203, 18, 38), "disc")
-    make_card("flexibles.png", "Canos flexibles", "Aplicaciones por modelo y medida", (30, 64, 175), "hose")
-    make_card("servos.png", "Servos y caliper", "Repuestos, reparaciones y conjuntos", (124, 58, 237), "box")
-    make_card("chaja.png", "Chaja conexiones", "Conectores, resortes y accesorios", (234, 88, 12), "box")
-    make_card("embragues.png", "Embragues", "Bombas, bombines y crapodinas", (8, 145, 178), "hose")
+    make_card("hidraulica.png", "Hidráulica", "Bombas, bombines y cilindros", (15, 118, 110), "hydraulic")
+    make_card("friccion.png", "Fricción", "Pastillas, discos y campanas", (203, 18, 38), "disc")
+    make_card("flexibles.png", "Caños flexibles", "Flexibles de freno por medida", (30, 64, 175), "hose")
+    make_card("servos.png", "Servos y cáliper", "Servos, cáliper y reparaciones", (124, 58, 237), "disc")
+    make_card("chaja.png", "Chajá conexiones", "Conectores, resortes y accesorios", (234, 88, 12), "box")
+    make_card("embragues.png", "Embragues", "Bombas y bombines de embrague", (8, 145, 178), "clutch")
 
 
 if __name__ == "__main__":

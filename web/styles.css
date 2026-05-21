@@ -40,6 +40,10 @@ body:not(.locked) .login-screen {
   display: none;
 }
 
+body.locked {
+  overflow: hidden;
+}
+
 button,
 input,
 textarea {
@@ -101,15 +105,18 @@ button:hover {
 
 .login-screen {
   display: block;
-  min-height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(237, 244, 243, 0.98)),
-    #ffffff;
+    radial-gradient(circle at 20% 12%, rgba(203, 18, 38, 0.12), transparent 28%),
+    radial-gradient(circle at 88% 4%, rgba(30, 64, 175, 0.12), transparent 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(239, 244, 248, 0.98)),
+    #f8fafc;
 }
 
 .catalog-home {
-  min-height: 100vh;
-  padding: 22px;
+  min-height: 100dvh;
+  padding: 18px;
 }
 
 .catalog-home-top {
@@ -118,16 +125,17 @@ button:hover {
   justify-content: space-between;
   gap: 20px;
   width: min(1180px, 100%);
-  margin: 0 auto 18px;
-  padding: 14px 18px;
+  margin: 0 auto 14px;
+  padding: 12px 16px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #ffffff;
-  box-shadow: var(--shadow);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(10px);
 }
 
 .home-logo {
-  width: min(280px, 62vw);
+  width: min(250px, 62vw);
   height: auto;
 }
 
@@ -145,17 +153,18 @@ button:hover {
 
 .home-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 380px;
-  gap: 22px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 420px);
+  align-items: center;
+  gap: 28px;
   width: min(1180px, 100%);
-  margin: 0 auto 22px;
-  padding: 38px;
+  margin: 0 auto 16px;
+  padding: 34px;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 18px;
   background:
-    linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(17, 32, 51, 0.96)),
+    linear-gradient(135deg, rgba(10, 20, 38, 0.98), rgba(16, 33, 60, 0.98)),
     #111827;
-  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.24);
+  box-shadow: 0 22px 56px rgba(15, 23, 42, 0.22);
   color: #ffffff;
 }
 
@@ -164,40 +173,30 @@ button:hover {
 }
 
 .hero-copy h1 {
-  max-width: 720px;
-  margin-bottom: 14px;
-  font-size: 46px;
-  line-height: 1.05;
+  max-width: 640px;
+  margin-bottom: 12px;
+  font-size: 42px;
+  line-height: 1.08;
 }
 
 .hero-copy p:not(.eyebrow) {
-  max-width: 680px;
+  max-width: 600px;
   color: #cbd5e1;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.5;
-}
-
-.home-search {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  max-width: 720px;
-  margin-top: 28px;
-  padding: 10px;
-  border-radius: 10px;
-  background: #ffffff;
 }
 
 .login-card {
   display: grid;
   align-content: center;
   width: 100%;
-  gap: 14px;
-  padding: 28px;
+  gap: 13px;
+  padding: 30px;
   background: #ffffff;
-  border-radius: 12px;
+  border: 1px solid rgba(219, 226, 234, 0.9);
+  border-radius: 14px;
   color: var(--ink);
-  box-shadow: var(--shadow);
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.2);
 }
 
 .login-card label {
@@ -209,8 +208,8 @@ button:hover {
 }
 
 .login-card h2 {
-  margin-bottom: 4px;
-  font-size: 28px;
+  margin-bottom: 2px;
+  font-size: 30px;
 }
 
 .login-hint {
@@ -222,24 +221,24 @@ button:hover {
 .home-categories {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
   width: min(1180px, 100%);
-  margin: 0 auto 28px;
+  margin: 0 auto 18px;
 }
 
 .home-categories article {
   position: relative;
-  min-height: 190px;
+  min-height: 168px;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #111827;
-  box-shadow: var(--shadow);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
 }
 
 .home-categories img {
   width: 100%;
   height: 100%;
-  min-height: 190px;
+  min-height: 168px;
   object-fit: cover;
   display: block;
   transition: transform 160ms ease;
@@ -258,6 +257,7 @@ button:hover {
   background: rgba(15, 23, 42, 0.82);
   color: #ffffff;
   font-weight: 800;
+  letter-spacing: 0;
 }
 
 .eyebrow {
@@ -978,30 +978,35 @@ tbody tr.selected {
   }
 
   .catalog-home {
-    padding: 12px;
+    padding: 10px;
   }
 
   .catalog-home-top,
   .home-hero {
     grid-template-columns: 1fr;
-    padding: 18px;
+    padding: 16px;
   }
 
   .catalog-home-top {
     display: grid;
+    gap: 12px;
   }
 
   .hero-copy h1 {
-    font-size: 32px;
+    font-size: 30px;
   }
 
-  .home-search,
   .home-categories {
     grid-template-columns: 1fr;
   }
 
+  .home-categories article,
+  .home-categories img {
+    min-height: 142px;
+  }
+
   .login-card {
-    padding: 26px;
+    padding: 24px;
   }
 }
 

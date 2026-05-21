@@ -1,0 +1,1107 @@
+{
+  "generado": "2026-05-20T15:34:32",
+  "archivos_leidos": 5,
+  "hojas_importadas": 53,
+  "hojas_omitidas": [],
+  "filas_importadas": 16944,
+  "productos_con_codigo_item": 16921,
+  "productos_con_codigo_barras": 12383,
+  "productos_con_descripcion": 16939,
+  "filas_por_archivo": {
+    "STOCK FLEXIBLES.xlsx": 1490,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx": 3952,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx": 7167,
+    "STOCK REPUESTOS DE SERVO.xlsx": 1449,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx": 2886
+  },
+  "filas_por_hoja": {
+    "STOCK FLEXIBLES.xlsx / Hoja1": 1490,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / BOMBA DE EMBRAGUE": 326,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / BOMBA DE FRENO": 837,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / BOMBIN DE EMBRAGUE": 216,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / CABLES DE FRENO": 665,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / CILINDRO DE RUEDA": 951,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / CRAPODINA HIDRAULICAS": 11,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / DEPRESORES": 33,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / KIT BOMBA EMB": 7,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / REPARACIONES DE BOMBA - BOMBIN": 787,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / TUBO DE CILINDRO MAESTRO Y ACCE": 36,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / VALVULA COMPESADORA": 75,
+    "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx / VALVULA LIMITADORA TRAS": 8,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / ALUMINIO LIVIANO": 61,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / ALUMINIO PESADO": 59,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / BRONCE - SCANIA": 2,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / BULON DE HIERRO": 10,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / CAMPANAS DE FRENO": 306,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / CAÑO DE COBRE": 6,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / CINTAS FRENO": 1051,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / COBRE SEMITIBULAR": 69,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / DISCOS DE FRENO": 738,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / HERRO VENTILADO EMB": 11,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / HIERRO SEMITIBULAR": 69,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / HIERRO VENTILADO FREN": 12,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / KIT FUELLES CALIPER": 32,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / MAZAS DE RUEDA": 167,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / MORDAZAS": 13,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / PASTILLAS DE FRENO": 3897,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / PATINES CON CINTA": 109,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / PERNOS GUIA": 266,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / PISTON CALIPER": 138,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / PLATOS TRASEROS": 8,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / RECAMBIO": 2,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / REMACHE PASTILLA": 8,
+    "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx / REP.CALIPER": 133,
+    "STOCK REPUESTOS DE SERVO.xlsx / REPUESTOS SERVO": 1288,
+    "STOCK REPUESTOS DE SERVO.xlsx / SERVO DE FRENO NUEVO": 21,
+    "STOCK REPUESTOS DE SERVO.xlsx / SERVOFRENO DE RECAMBIO": 140,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / ANTIRRUIDO - PASTILLA": 68,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / CHAJA ": 596,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / CONEXIONES": 34,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / CUBETAS - GUARD. SELLOS": 542,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / DEPOSITO DE LIQUIDO DE FRENO": 84,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / LIQUIDO DE FRENO": 25,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / MANGUERA - CAÑO COBRE": 1,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / PALANCAS DE FRENO MANO": 39,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / RESORTES GENERALES": 1123,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / RETENES DE RUEDA": 171,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / RODAMIENTO DE RUEDA": 106,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / TAPAS DE DEPOSITO": 57,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / TASAS GRASERAS": 34,
+    "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx / VARIOS GRASA - REFRI": 6
+  },
+  "detalle_hojas": [
+    {
+      "archivo": "STOCK FLEXIBLES.xlsx",
+      "hoja": "Hoja1",
+      "filas_importadas": 1490,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "BOMBA DE FRENO",
+      "filas_importadas": 837,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "BOMBA DE EMBRAGUE",
+      "filas_importadas": 326,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "BOMBIN DE EMBRAGUE",
+      "filas_importadas": 216,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "VALVULA COMPESADORA",
+      "filas_importadas": 75,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "CILINDRO DE RUEDA",
+      "filas_importadas": 951,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "REPARACIONES DE BOMBA - BOMBIN",
+      "filas_importadas": 787,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "KIT BOMBA EMB",
+      "filas_importadas": 7,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "VALVULA LIMITADORA TRAS",
+      "filas_importadas": 8,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "DEPRESORES",
+      "filas_importadas": 33,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "CRAPODINA HIDRAULICAS",
+      "filas_importadas": 11,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "TUBO DE CILINDRO MAESTRO Y ACCE",
+      "filas_importadas": 36,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO BOMBAS - BOMBA EMB - BOMBIN EMB - CILINDROS RUEDA - CLAVOS - CABLES - TUBOS EMB.xlsx",
+      "hoja": "CABLES DE FRENO",
+      "filas_importadas": 665,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "PASTILLAS DE FRENO",
+      "filas_importadas": 3897,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "CAMPANAS DE FRENO",
+      "filas_importadas": 306,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "DISCOS DE FRENO",
+      "filas_importadas": 738,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "CINTAS FRENO",
+      "filas_importadas": 1051,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "PATINES CON CINTA",
+      "filas_importadas": 109,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "PLATOS TRASEROS",
+      "filas_importadas": 8,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "RECAMBIO",
+      "filas_importadas": 2,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "marca",
+        "producto",
+        "proveedor",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "ALUMINIO LIVIANO",
+      "filas_importadas": 61,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "ALUMINIO PESADO",
+      "filas_importadas": 59,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "COBRE SEMITIBULAR",
+      "filas_importadas": 69,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "BRONCE - SCANIA",
+      "filas_importadas": 2,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "CAÑO DE COBRE",
+      "filas_importadas": 6,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "HIERRO SEMITIBULAR",
+      "filas_importadas": 69,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "HERRO VENTILADO EMB",
+      "filas_importadas": 11,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "HIERRO VENTILADO FREN",
+      "filas_importadas": 12,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "BULON DE HIERRO",
+      "filas_importadas": 10,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "REMACHE PASTILLA",
+      "filas_importadas": 8,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "MAZAS DE RUEDA",
+      "filas_importadas": 167,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "PISTON CALIPER",
+      "filas_importadas": 138,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "PERNOS GUIA",
+      "filas_importadas": 266,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "KIT FUELLES CALIPER",
+      "filas_importadas": 32,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "REP.CALIPER",
+      "filas_importadas": 133,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida"
+      ]
+    },
+    {
+      "archivo": "STOCK INVENTARIO PARTE 2 - PASTILLAS - CAMPANS - DISCOS - CINTA  - CALIPER - REMACHES.xlsx",
+      "hoja": "MORDAZAS",
+      "filas_importadas": 13,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK REPUESTOS DE SERVO.xlsx",
+      "hoja": "REPUESTOS SERVO",
+      "filas_importadas": 1288,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK REPUESTOS DE SERVO.xlsx",
+      "hoja": "SERVOFRENO DE RECAMBIO",
+      "filas_importadas": 140,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK REPUESTOS DE SERVO.xlsx",
+      "hoja": "SERVO DE FRENO NUEVO",
+      "filas_importadas": 21,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "DEPOSITO DE LIQUIDO DE FRENO",
+      "filas_importadas": 84,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "TAPAS DE DEPOSITO",
+      "filas_importadas": 57,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "RESORTES GENERALES",
+      "filas_importadas": 1123,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "RODAMIENTO DE RUEDA",
+      "filas_importadas": 106,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "RETENES DE RUEDA",
+      "filas_importadas": 171,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "ANTIRRUIDO - PASTILLA",
+      "filas_importadas": 68,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "CHAJA ",
+      "filas_importadas": 596,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "CONEXIONES",
+      "filas_importadas": 34,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "PALANCAS DE FRENO MANO",
+      "filas_importadas": 39,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "stock",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "LIQUIDO DE FRENO",
+      "filas_importadas": 25,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "VARIOS GRASA - REFRI",
+      "filas_importadas": 6,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "CUBETAS - GUARD. SELLOS",
+      "filas_importadas": 542,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "deposito",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "TASAS GRASERAS",
+      "filas_importadas": 34,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "departamento",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "proveedor",
+        "salida",
+        "unidad"
+      ]
+    },
+    {
+      "archivo": "STOCK RESORTES - CHAJA - LIQUIDO - RULEMANES - RETENES.xlsx",
+      "hoja": "MANGUERA - CAÑO COBRE",
+      "filas_importadas": 1,
+      "encabezado_fila": 2,
+      "columnas_detectadas": [
+        "codigo_articulo",
+        "codigo_barras",
+        "codigo_item",
+        "descripcion",
+        "entrada",
+        "marca",
+        "producto",
+        "salida",
+        "stock"
+      ]
+    }
+  ],
+  "salida_csv": "C:\\Users\\Frenos Coronel Díaz\\Documents\\CREAR SOFTWARE PARA NEGOCIO\\DATOS_IMPORTADOS\\inventario_unificado.csv"
+}

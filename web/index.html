@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Frenos Coronel Diaz SA</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <section id="loginScreen" class="login-screen">
+      <div class="catalog-home">
+        <header class="catalog-home-top">
+          <img class="home-logo" src="/assets/logo-frenos-coronel-diaz.png" alt="Frenos Coronel Diaz S.A." />
+          <nav>
+            <a href="#homeCategories">Catálogo</a>
+            <a href="#loginForm">Area exclusiva</a>
+          </nav>
+        </header>
+
+        <section class="home-hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Repuestos para frenos y embragues</p>
+            <h1>Catálogo inteligente Frenos Coronel Diaz SA</h1>
+            <p>
+              Busqueda rapida por codigo, marca, proveedor, categoria o aplicacion. Stock, ventas y gestion empresarial en un solo sistema.
+            </p>
+            <div class="home-search">
+              <input type="search" placeholder="Buscar: pastillas corsa, flexible, bomba freno, PD145..." />
+              <button type="button">Buscar</button>
+            </div>
+          </div>
+          <form id="loginForm" class="login-card">
+            <p class="eyebrow">Area exclusiva</p>
+            <h2>Iniciar sesion</h2>
+            <label>
+              Usuario
+              <input id="userInput" type="text" autocomplete="username" value="admin" />
+            </label>
+            <label>
+              Contraseña
+              <input id="passwordInput" type="password" autocomplete="current-password" value="admin123" />
+            </label>
+            <button type="submit">Entrar al sistema</button>
+            <p id="loginMessage" class="message"></p>
+          </form>
+        </section>
+
+        <section id="homeCategories" class="home-categories">
+          <article>
+            <img src="/assets/inicio/hidraulica.png" alt="Hidráulica" />
+            <span>Hidráulica</span>
+          </article>
+          <article>
+            <img src="/assets/inicio/friccion.png" alt="Friccion" />
+            <span>Friccion</span>
+          </article>
+          <article>
+            <img src="/assets/inicio/flexibles.png" alt="Caños flexibles" />
+            <span>Caños flexibles</span>
+          </article>
+          <article>
+            <img src="/assets/inicio/servos.png" alt="Servos y cáliper" />
+            <span>Servos y cáliper</span>
+          </article>
+          <article>
+            <img src="/assets/inicio/chaja.png" alt="Chajá y conexiones" />
+            <span>Chajá y conexiones</span>
+          </article>
+          <article>
+            <img src="/assets/inicio/embragues.png" alt="Embragues" />
+            <span>Embragues</span>
+          </article>
+        </section>
+      </div>
+    </section>
+
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Sistema interno</p>
+        <h1>Frenos Coronel Diaz SA</h1>
+      </div>
+      <div class="top-actions">
+        <div class="summary" id="summary">
+          <span>Cargando inventario...</span>
+        </div>
+        <div class="user-pill">
+          <span id="userLabel">Sin usuario</span>
+          <button id="logoutButton" type="button">Salir</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout erp-shell">
+      <nav class="side-menu" aria-label="Menu principal">
+        <div class="menu-brand">
+          <span>Menu</span>
+          <strong>FCD</strong>
+        </div>
+        <button class="menu-item active" type="button" data-view="dashboard">
+          <span class="menu-icon">D</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="menu-item" type="button" data-view="venta">
+          <span class="menu-icon">V</span>
+          <span>Ventas</span>
+        </button>
+        <button class="menu-item" type="button" data-view="productos">
+          <span class="menu-icon">P</span>
+          <span>Productos</span>
+        </button>
+        <button class="menu-item admin-only" type="button" data-view="movimientos">
+          <span class="menu-icon">M</span>
+          <span>Movimientos</span>
+        </button>
+        <button class="menu-item admin-only" type="button" data-view="usuarios">
+          <span class="menu-icon">U</span>
+          <span>Usuarios</span>
+        </button>
+        <button class="menu-item admin-only" type="button" data-view="ajustes">
+          <span class="menu-icon">A</span>
+          <span>Ajustes</span>
+        </button>
+        <div class="menu-note" id="menuNote">Módulo actual: Dashboard.</div>
+      </nav>
+
+      <section class="workspace">
+        <section class="catalog-search">
+          <div class="global-search">
+        <label for="searchInput">Buscar en todo el catálogo</label>
+            <div class="search-row">
+              <input id="searchInput" type="search" placeholder="Codigo, codigo de barras, marca, descripcion, aplicacion..." autofocus />
+              <button id="searchButton" type="button">Buscar</button>
+            </div>
+          </div>
+          <div class="filter-box">
+            <label for="providerFilter">Proveedor</label>
+            <select id="providerFilter">
+              <option value="">Todos</option>
+            </select>
+          </div>
+          <div class="filter-box">
+        <label for="categoryFilter">Categoría</label>
+            <select id="categoryFilter">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <button id="clearFiltersButton" class="secondary-button" type="button">Limpiar</button>
+        </section>
+
+        <div class="workspace-scroll">
+          <section class="panel search-panel module-screen" data-module="productos">
+            <div class="section-head">
+              <div>
+                <h2>Catálogo</h2>
+                <p>Resultados dentro del módulo, sin superposición.</p>
+              </div>
+              <button id="refreshButton" type="button">Actualizar</button>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Marca</th>
+                    <th>Descripción</th>
+                    <th>Stock</th>
+                  </tr>
+                </thead>
+                <tbody id="productsBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel executive-dashboard module-screen is-active" id="executiveDashboard" data-module="dashboard">
+            <div class="dashboard-hero">
+              <div>
+                <p class="eyebrow">Control empresarial</p>
+                <h2>Dashboard ejecutivo</h2>
+                <span>Estado operativo de ventas, stock, categorías y productos críticos.</span>
+              </div>
+              <button id="refreshDashboardButton" type="button">Actualizar</button>
+            </div>
+            <div class="kpi-grid">
+              <article class="kpi-card">
+                <span>Productos</span>
+                <strong id="kpiProducts">0</strong>
+              </article>
+              <article class="kpi-card">
+                <span>Unidades disponibles</span>
+                <strong id="kpiUnits">0</strong>
+              </article>
+              <article class="kpi-card warning">
+                <span>Productos sin stock</span>
+                <strong id="kpiNoStock">0</strong>
+              </article>
+              <article class="kpi-card danger">
+                <span>Stock crítico</span>
+                <strong id="kpiCritical">0</strong>
+              </article>
+              <article class="kpi-card">
+                <span>Ventas registradas</span>
+                <strong id="kpiSales">0</strong>
+              </article>
+              <article class="kpi-card">
+                <span>Unidades vendidas</span>
+                <strong id="kpiSoldUnits">0</strong>
+              </article>
+            </div>
+            <div class="dashboard-grid">
+              <section class="dashboard-block">
+                <h3>Categorías principales</h3>
+                <div id="dashboardCategories" class="metric-list"></div>
+              </section>
+              <section class="dashboard-block">
+                <h3>Productos críticos</h3>
+                <div id="dashboardCritical" class="metric-list"></div>
+              </section>
+              <section class="dashboard-block">
+                <h3>Productos con mayor salida</h3>
+                <div id="dashboardTopSales" class="metric-list"></div>
+              </section>
+            </div>
+          </section>
+
+          <section class="panel sales-dashboard module-screen" id="salesDashboard" data-module="venta">
+        <div class="section-head">
+          <div>
+            <h2>Ventas</h2>
+            <p>Venta con carrito, salida de productos, ranking y últimas operaciones.</p>
+          </div>
+          <button id="closeSalesDashboard" class="secondary-button" type="button">Cerrar</button>
+        </div>
+        <div class="cart-sale">
+          <section class="cart-box">
+            <div class="cart-head">
+              <div>
+                <h3>Carrito de venta</h3>
+                <span id="cartSummary">0 productos seleccionados</span>
+              </div>
+              <button id="addSelectedToCart" type="button">Agregar producto seleccionado</button>
+            </div>
+            <div id="cartItems" class="cart-items">
+              <div class="empty-state">Seleccioná productos del catálogo y agregalos al carrito.</div>
+            </div>
+          </section>
+          <form id="cartSaleForm" class="cart-form">
+            <label>
+              Cliente
+              <input id="cartCustomer" type="text" placeholder="Cliente opcional" />
+            </label>
+            <label>
+              Nota
+              <textarea id="cartNote" rows="2" placeholder="Observación opcional"></textarea>
+            </label>
+            <div class="cart-actions">
+              <button type="submit">Confirmar venta</button>
+              <button id="clearCartButton" class="secondary-button" type="button">Vaciar</button>
+            </div>
+            <p id="cartMessage" class="message"></p>
+          </form>
+        </div>
+        <div class="sales-kpis">
+          <div>
+            <span>Operaciones registradas</span>
+            <strong id="salesOperations">0</strong>
+          </div>
+          <div>
+            <span>Unidades con salida</span>
+            <strong id="salesUnits">0</strong>
+          </div>
+        </div>
+        <div class="sales-grid">
+          <section>
+            <h3>Productos con mayor salida</h3>
+            <div id="topSalesList" class="rank-list"></div>
+          </section>
+          <section>
+            <h3>Ultimas ventas</h3>
+            <div id="recentSalesList" class="rank-list"></div>
+          </section>
+        </div>
+          </section>
+
+          <section class="panel product-dashboard module-screen" id="productDashboard" data-module="productos">
+        <div class="section-head">
+          <div>
+            <h2>Productos</h2>
+            <p>Editar ficha, proveedor, categoría, descripción y ubicación física.</p>
+          </div>
+          <button id="closeProductDashboard" class="secondary-button" type="button">Cerrar</button>
+        </div>
+        <div id="productEditorEmpty" class="empty-state">Selecciona un producto del catalogo para editarlo.</div>
+        <form id="productEditorForm" class="product-editor is-hidden">
+          <label>
+            Código interno
+            <input id="editCodigoItem" type="text" />
+          </label>
+          <label>
+            Código de barras
+            <input id="editCodigoBarras" type="text" />
+          </label>
+          <label>
+            Código de artículo
+            <input id="editCodigoArticulo" type="text" />
+          </label>
+          <label>
+            Producto
+            <input id="editProducto" type="text" />
+          </label>
+          <label>
+            Marca
+            <input id="editMarca" type="text" />
+          </label>
+          <label>
+            Proveedor
+            <input id="editProveedor" type="text" />
+          </label>
+          <label>
+            Categoría
+            <input id="editDepartamento" type="text" />
+          </label>
+          <label>
+            Ubicación
+            <input id="editUbicacion" type="text" placeholder="Ej: DEP-EST3-FILA2-CAJ4" />
+          </label>
+          <label>
+            Stock mínimo
+            <input id="editStockMinimo" type="number" min="0" step="1" />
+          </label>
+          <label class="wide-field">
+            Descripción
+            <textarea id="editDescripcion" rows="3"></textarea>
+          </label>
+          <div class="editor-actions">
+            <button type="submit">Guardar producto</button>
+            <p id="productEditorMessage" class="message"></p>
+          </div>
+        </form>
+          </section>
+
+          <section class="panel placeholder-module module-screen" data-module="usuarios">
+            <div class="section-head">
+              <div>
+                <h2>Usuarios</h2>
+                <p>Administración de usuarios y permisos. Pendiente de aprobación de la base visual.</p>
+              </div>
+            </div>
+            <div class="empty-state">Este módulo se activará cuando apruebes la Etapa 1.</div>
+          </section>
+
+          <section class="panel placeholder-module module-screen" data-module="ajustes">
+            <div class="section-head">
+              <div>
+                <h2>Ajustes</h2>
+                <p>Configuración general del sistema. Pendiente de aprobación de la base visual.</p>
+              </div>
+            </div>
+            <div class="empty-state">Este módulo se activará cuando apruebes la Etapa 1.</div>
+          </section>
+
+          <section class="panel movements-module module-screen" data-module="movimientos">
+            <div class="section-head">
+              <div>
+                <h2>Movimientos</h2>
+                <p>Historial de operaciones y salidas registradas.</p>
+              </div>
+            </div>
+            <div id="movements" class="movements"></div>
+          </section>
+
+        </div>
+      </section>
+
+      <aside class="panel sale-panel module-screen" data-module="venta">
+        <h2>Panel de venta</h2>
+        <div id="selectedProduct" class="empty-state">Seleccioná un producto para operar.</div>
+
+        <form id="saleForm" class="sale-form">
+          <label>
+            Cantidad
+            <input id="quantityInput" type="number" min="1" step="1" value="1" />
+          </label>
+          <label>
+            Nota
+            <textarea id="noteInput" rows="3" placeholder="Cliente, comprobante o detalle opcional"></textarea>
+          </label>
+          <button type="submit">Registrar salida</button>
+          <p id="saleMessage" class="message"></p>
+        </form>
+
+      </aside>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

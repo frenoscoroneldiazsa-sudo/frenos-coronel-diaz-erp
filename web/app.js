@@ -65,6 +65,7 @@ const cartMessage = document.querySelector("#cartMessage");
 const clearCartButton = document.querySelector("#clearCartButton");
 const productsBody = document.querySelector("#productsBody");
 const searchInput = document.querySelector("#searchInput");
+const searchLabel = document.querySelector("label[for='searchInput']");
 const searchButton = document.querySelector("#searchButton");
 const refreshButton = document.querySelector("#refreshButton");
 const providerFilter = document.querySelector("#providerFilter");
@@ -695,6 +696,15 @@ function setActiveMenu(view) {
     loadDashboard();
   }
   if (view === "catalogo" || view === "venta") {
+    if (searchLabel) {
+      searchLabel.textContent = view === "venta" ? "Buscar producto para vender" : "Buscar en todo el catálogo";
+    }
+    if (searchInput) {
+      searchInput.placeholder =
+        view === "venta"
+          ? "Código, código de barras, producto, marca o vehículo..."
+          : "Código, código de barras, marca, descripción, aplicación...";
+    }
     searchInput.focus();
   }
   if (view === "inventario") {

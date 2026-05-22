@@ -72,7 +72,7 @@
       }
     </style>
     <link rel="stylesheet" href="/styles.css?v=20260522-7" />
-    <link rel="stylesheet" href="/erp-theme.css?v=20260522-9" />
+    <link rel="stylesheet" href="/erp-theme.css?v=20260522-14" />
   </head>
   <body class="booting">
     <div id="bootScreen" class="boot-screen" role="status" aria-live="polite">
@@ -405,35 +405,6 @@
             <strong id="salesUnits">0</strong>
           </article>
         </div>
-        <div class="cart-sale sales-cart-zone">
-          <section class="cart-box">
-            <div class="cart-head">
-              <div>
-                <h3>Carrito de venta</h3>
-                <span id="cartSummary">0 productos seleccionados</span>
-              </div>
-              <button id="addSelectedToCart" class="sales-btn-compact" type="button">+ Agregar seleccionado</button>
-            </div>
-            <div id="cartItems" class="cart-items">
-              <div class="empty-state">Seleccioná productos del catálogo y agregalos al carrito.</div>
-            </div>
-          </section>
-          <form id="cartSaleForm" class="cart-form sales-checkout-form">
-            <label>
-              Cliente
-              <input id="cartCustomer" type="text" placeholder="Cliente opcional" />
-            </label>
-            <label>
-              Nota
-              <textarea id="cartNote" rows="2" placeholder="Observación opcional"></textarea>
-            </label>
-            <div class="cart-actions">
-              <button type="submit" class="sales-btn-confirm">Confirmar venta</button>
-              <button id="clearCartButton" class="secondary-button sales-btn-compact" type="button">Vaciar</button>
-            </div>
-            <p id="cartMessage" class="message"></p>
-          </form>
-        </div>
         <div class="sales-grid sales-rankings">
           <section>
             <h3>Productos con mayor salida</h3>
@@ -655,11 +626,41 @@
           <button type="submit">Registrar salida</button>
           <p id="saleMessage" class="message"></p>
         </form>
+
+        <div class="cart-sale sales-cart-zone">
+          <section class="cart-box">
+            <div class="cart-head">
+              <div>
+                <h3>Carrito de venta</h3>
+                <span id="cartSummary">0 productos seleccionados</span>
+              </div>
+              <button id="addSelectedToCart" class="sales-btn-compact" type="button">+ Agregar seleccionado</button>
+            </div>
+            <div id="cartItems" class="cart-items">
+              <div class="empty-state">Seleccioná productos del catálogo y agregalos al carrito.</div>
+            </div>
+          </section>
+          <form id="cartSaleForm" class="cart-form sales-checkout-form">
+            <label>
+              Cliente
+              <input id="cartCustomer" type="text" placeholder="Cliente opcional" />
+            </label>
+            <label>
+              Nota
+              <textarea id="cartNote" rows="2" placeholder="Observación opcional"></textarea>
+            </label>
+            <div class="cart-actions">
+              <button type="submit" class="sales-btn-confirm">Confirmar venta</button>
+              <button id="clearCartButton" class="secondary-button sales-btn-compact" type="button">Vaciar</button>
+            </div>
+            <p id="cartMessage" class="message"></p>
+          </form>
+        </div>
         </div>
       </aside>
     </main>
 
-    <script src="/app.js?v=20260522-7"></script>
+    <script src="/app.js?v=20260522-8"></script>
     <script>
       window.setTimeout(function () {
         document.body.classList.remove("booting");

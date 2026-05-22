@@ -2213,3 +2213,411 @@ body:not(.locked)[data-module="venta"] .sale-drawer button[type="submit"] {
     transform: translateY(0);
   }
 }
+
+/* Fase 1 Ventas: punto de venta compacto, estable y sin duplicaciones */
+body:not(.locked)[data-module="venta"] {
+  --sale-panel-w: 430px;
+}
+
+body:not(.locked)[data-module="venta"] .workspace {
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  overflow: hidden !important;
+}
+
+body:not(.locked)[data-module="venta"] .catalog-search {
+  grid-template-columns: minmax(260px, 1fr) 180px 180px auto !important;
+  align-items: end !important;
+  padding: 12px 14px !important;
+  border-color: rgba(79, 143, 247, 0.32) !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, rgba(79, 143, 247, 0.13), rgba(19, 27, 46, 0.96) 46%, rgba(19, 27, 46, 0.98)) !important;
+}
+
+body:not(.locked)[data-module="venta"] .global-search {
+  min-width: 0 !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-feedback {
+  margin-top: 6px !important;
+}
+
+body:not(.locked)[data-module="venta"] .workspace-scroll {
+  display: block !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-panel.sales-product-picker {
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 14px !important;
+  overflow: hidden !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-panel .section-head {
+  margin-bottom: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-panel .section-head h2 {
+  font-size: 1rem !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-panel .section-head p:not(.venta-picker-hint),
+body:not(.locked)[data-module="venta"] .catalog-assistant,
+body:not(.locked)[data-module="venta"] .sales-dashboard.module-screen.is-active {
+  display: none !important;
+}
+
+body:not(.locked)[data-module="venta"] .venta-picker-hint {
+  display: block !important;
+  margin: 4px 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--erp-muted) !important;
+  font-size: 0.76rem !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-panel .table-wrap {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: auto !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-panel table {
+  min-width: 1060px !important;
+  font-size: 0.78rem !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-panel th {
+  top: 0 !important;
+  padding: 9px 8px !important;
+  font-size: 0.62rem !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-panel td {
+  padding: 8px !important;
+  vertical-align: middle !important;
+}
+
+body:not(.locked)[data-module="venta"] .search-panel td:nth-child(4) {
+  min-width: 220px !important;
+  font-weight: 700 !important;
+}
+
+body:not(.locked)[data-module="venta"] .stock {
+  display: inline-grid !important;
+  min-width: 38px !important;
+  min-height: 26px !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  background: rgba(52, 211, 153, 0.11) !important;
+  color: #9df2cc !important;
+  font-weight: 800 !important;
+}
+
+body:not(.locked)[data-module="venta"] .stock.low {
+  background: rgba(248, 113, 113, 0.12) !important;
+  color: var(--erp-danger) !important;
+}
+
+body:not(.locked)[data-module="venta"] .row-actions {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 5px !important;
+}
+
+body:not(.locked)[data-module="venta"] .row-actions button {
+  min-height: 28px !important;
+  padding: 4px 9px !important;
+  border-radius: 8px !important;
+  font-size: 0.68rem !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer {
+  grid-column: 3 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 14px !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer-head {
+  padding: 14px 16px 10px !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer-head h2 {
+  font-size: 1rem !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  min-height: 0 !important;
+  padding: 12px 14px 14px !important;
+  overflow-y: auto !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer .empty-state,
+body:not(.locked)[data-module="venta"] .sale-drawer .selected-box {
+  flex-shrink: 0 !important;
+  padding: 12px !important;
+  text-align: left !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer .selected-box strong {
+  display: block !important;
+  margin-bottom: 4px !important;
+  font-size: 0.86rem !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer .selected-box p {
+  margin: 6px 0 !important;
+  color: var(--erp-muted) !important;
+  font-size: 0.78rem !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer .sale-form {
+  flex-shrink: 0 !important;
+  display: grid !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 12px !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer .sale-form textarea {
+  min-height: 74px !important;
+  resize: vertical !important;
+}
+
+body:not(.locked)[data-module="venta"] .sale-drawer .sale-form button[type="submit"] {
+  min-height: 44px !important;
+  border-color: rgba(229, 57, 53, 0.5) !important;
+  background: linear-gradient(180deg, #ef5350, #c62828) !important;
+}
+
+body:not(.locked)[data-module="venta"] .sales-cart-zone {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 280px !important;
+  overflow: hidden !important;
+  gap: 10px !important;
+}
+
+body:not(.locked)[data-module="venta"] .cart-box {
+  flex: 1 1 auto !important;
+  min-height: 150px !important;
+  padding: 12px !important;
+}
+
+body:not(.locked)[data-module="venta"] .cart-head {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+}
+
+body:not(.locked)[data-module="venta"] .cart-head h3 {
+  margin: 0 !important;
+}
+
+body:not(.locked)[data-module="venta"] #addSelectedToCart {
+  align-self: start !important;
+}
+
+body:not(.locked)[data-module="venta"] .cart-items {
+  display: grid !important;
+  align-content: start !important;
+}
+
+body:not(.locked)[data-module="venta"] .sales-checkout-form {
+  flex-shrink: 0 !important;
+  padding: 12px !important;
+}
+
+body:not(.locked)[data-module="venta"] .sales-checkout-form textarea {
+  min-height: 62px !important;
+  resize: vertical !important;
+}
+
+/* Catálogo: formulario de producto con altura controlada */
+body:not(.locked)[data-module="catalogo"] .workspace-scroll {
+  display: grid !important;
+  grid-template-rows: minmax(300px, 1.08fr) minmax(320px, 0.92fr) !important;
+  gap: var(--erp-space-md) !important;
+  overflow: hidden !important;
+}
+
+body:not(.locked)[data-module="catalogo"] .search-panel,
+body:not(.locked)[data-module="catalogo"] .product-dashboard {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+body:not(.locked)[data-module="catalogo"] .product-dashboard {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+body:not(.locked)[data-module="catalogo"] .product-editor {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding-right: 4px !important;
+}
+
+body:not(.locked)[data-module="catalogo"] .product-editor .wide-field,
+body:not(.locked)[data-module="catalogo"] .product-editor .editor-actions {
+  grid-column: 1 / -1 !important;
+}
+
+@media (min-width: 1200px) {
+  body:not(.locked)[data-module="venta"] .layout.erp-shell {
+    grid-template-columns: var(--sidebar-w) minmax(720px, 1fr) var(--sale-panel-w) !important;
+  }
+
+  body:not(.locked)[data-module="venta"].sidebar-collapsed .layout.erp-shell {
+    grid-template-columns: var(--sidebar-collapsed-w) minmax(720px, 1fr) var(--sale-panel-w) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  body:not(.locked)[data-module="venta"] {
+    --sale-panel-w: 360px;
+  }
+
+  body:not(.locked)[data-module="venta"] .catalog-search {
+    grid-template-columns: minmax(220px, 1fr) 150px 150px !important;
+  }
+
+  body:not(.locked)[data-module="venta"] #clearFiltersButton {
+    grid-column: 1 / -1 !important;
+    justify-self: end !important;
+  }
+}
+
+@media (max-width: 960px) {
+  body:not(.locked)[data-module="venta"] .layout.erp-shell {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: minmax(0, 1fr) auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .workspace {
+    grid-column: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 62vh !important;
+    overflow: visible !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .workspace-scroll {
+    min-height: 420px !important;
+    overflow: visible !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .search-panel.sales-product-picker {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 420px !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .search-panel .table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .sale-drawer {
+    position: static !important;
+    grid-column: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    height: auto !important;
+    border-radius: 14px !important;
+    animation: none !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .sale-modal-backdrop,
+  body:not(.locked)[data-module="venta"] .sale-drawer-handle {
+    display: none !important;
+  }
+
+  body:not(.locked)[data-module="catalogo"] .workspace-scroll {
+    display: block !important;
+    overflow-y: auto !important;
+  }
+
+  body:not(.locked)[data-module="catalogo"] .product-dashboard {
+    margin-top: var(--erp-space-md) !important;
+    overflow: visible !important;
+  }
+}
+
+@media (max-width: 767px) {
+  body:not(.locked)[data-module="venta"] .catalog-search {
+    grid-template-columns: 1fr !important;
+    width: min(100%, calc(100vw - 40px)) !important;
+    max-width: calc(100vw - 40px) !important;
+    min-width: 0 !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .global-search,
+  body:not(.locked)[data-module="venta"] .search-row {
+    width: 100% !important;
+    max-width: calc(100vw - 72px) !important;
+    min-width: 0 !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  body:not(.locked)[data-module="venta"] #searchInput,
+  body:not(.locked)[data-module="venta"] #searchButton,
+  body:not(.locked)[data-module="venta"] #clearFiltersButton {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .filter-box {
+    display: none !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .search-panel table {
+    min-width: 920px !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .cart-head,
+  body:not(.locked)[data-module="venta"] .cart-line {
+    grid-template-columns: 1fr !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .cart-quantity,
+  body:not(.locked)[data-module="venta"] .cart-line .icon-button {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 960px) {
+  body:not(.locked) .side-menu {
+    position: fixed !important;
+    inset: var(--topbar-h) auto 0 0 !important;
+    width: min(88vw, 300px) !important;
+    height: calc(100dvh - var(--topbar-h)) !important;
+    transform: translateX(-108%) !important;
+  }
+
+  body:not(.locked).menu-open .side-menu {
+    transform: translateX(0) !important;
+  }
+}

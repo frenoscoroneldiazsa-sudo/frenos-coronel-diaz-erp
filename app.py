@@ -1,16 +1,24 @@
 from __future__ import annotations
 
 import csv
+import base64
 import hashlib
 import hmac
+import io
 import json
 import os
+import re
 import secrets
 import sqlite3
 from datetime import datetime
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
+
+try:
+    from openpyxl import load_workbook
+except ImportError:
+    load_workbook = None
 
 try:
     import psycopg
@@ -80,6 +88,40 @@ def to_int(value: object) -> int:
         return int(float(text))
     except ValueError:
         return 0
+
+
+def now_text() -> str:
+    return datetime.now().isoformat(timespec="seconds")
+
+
+def row_to_dict(row) -> dict:
+    return dict(row) if row is not None else {}
+
+
+def normalized_stock(row) -> dict:
+    product = row_to_dict(row)
+    unidad = to_int(product.get("stock_unidad"))
+    deposito = to_int(product.get("stock_deposito"))
+    if unidad == 0 and deposito == 0 and to_int(product.get("stock")) != 0:
+        unidad = to_int(product.get("stock"))
+    product["stock_unidad"] = unidad
+    product["stock_deposito"] = deposito
+    product["stock"] = unidad + deposito
+    product["stock_total"] = unidad + deposito
+    return product
+
+
+def compact_key(value: object) -> str:
+    return re.sub(r"[^a-z0-9]+", "", str(value or "").strip().lower())
+
+
+def pick(row: dict, *names: str) -> object:
+    normalized = {compact_key(key): value for key, value in row.items()}
+    for name in names:
+        key = compact_key(name)
+        if key in normalized:
+            return normalized[key]
+    return ""
 
 
 def hash_password(password: str, salt: str | None = None) -> str:
@@ -182,9 +224,13 @@ def init_db() -> None:
             proveedor TEXT,
             departamento TEXT,
             descripcion TEXT,
+            aplicacion TEXT,
             stock INTEGER NOT NULL DEFAULT 0,
+            stock_unidad INTEGER NOT NULL DEFAULT 0,
+            stock_deposito INTEGER NOT NULL DEFAULT 0,
             ubicacion TEXT,
             stock_minimo INTEGER NOT NULL DEFAULT 0,
+            fecha_actualizacion TEXT,
             UNIQUE (archivo_origen, hoja_origen, fila_origen)
         );
 
@@ -197,6 +243,7 @@ def init_db() -> None:
             stock_anterior INTEGER NOT NULL,
             stock_nuevo INTEGER NOT NULL,
             nota TEXT,
+            motivo TEXT,
             usuario_id INTEGER,
             usuario_nombre TEXT,
             FOREIGN KEY (producto_id) REFERENCES productos(id)
@@ -242,6 +289,36 @@ def init_db() -> None:
         execute(conn, "ALTER TABLE productos ADD COLUMN ubicacion TEXT")
     if "stock_minimo" not in product_columns:
         execute(conn, "ALTER TABLE productos ADD COLUMN stock_minimo INTEGER NOT NULL DEFAULT 0")
+    if "stock_unidad" not in product_columns:
+        execute(conn, "ALTER TABLE productos ADD COLUMN stock_unidad INTEGER NOT NULL DEFAULT 0")
+    if "stock_deposito" not in product_columns:
+        execute(conn, "ALTER TABLE productos ADD COLUMN stock_deposito INTEGER NOT NULL DEFAULT 0")
+    if "aplicacion" not in product_columns:
+        execute(conn, "ALTER TABLE productos ADD COLUMN aplicacion TEXT")
+    if "fecha_actualizacion" not in product_columns:
+        execute(conn, "ALTER TABLE productos ADD COLUMN fecha_actualizacion TEXT")
+
+    movement_columns = table_columns(conn, "movimientos")
+    if "motivo" not in movement_columns:
+        execute(conn, "ALTER TABLE movimientos ADD COLUMN motivo TEXT")
+
+    execute(
+        conn,
+        """
+        UPDATE productos
+        SET stock_unidad = stock
+        WHERE COALESCE(stock_unidad, 0) = 0
+          AND COALESCE(stock_deposito, 0) = 0
+          AND COALESCE(stock, 0) <> 0
+        """,
+    )
+    execute(
+        conn,
+        """
+        UPDATE productos
+        SET stock = COALESCE(stock_unidad, 0) + COALESCE(stock_deposito, 0)
+        """,
+    )
 
     execute(conn, "UPDATE usuarios SET usuario = 'admin' WHERE usuario = 'dueno'")
     execute(conn, "UPDATE usuarios SET rol = 'administrador' WHERE rol = 'dueno'")
@@ -279,7 +356,9 @@ def import_csv(conn: sqlite3.Connection) -> None:
         reader = csv.DictReader(file)
         rows = []
         for row in reader:
-            stock = to_int(row.get("stock_calculado") or row.get("unidad") or row.get("stock"))
+            stock_unidad = to_int(row.get("unidad") or row.get("stock_unidad") or row.get("stock_calculado") or row.get("stock"))
+            stock_deposito = to_int(row.get("deposito") or row.get("stock_deposito") or row.get("depósito"))
+            stock = stock_unidad + stock_deposito
             rows.append(
                 (
                     row.get("archivo_origen", ""),
@@ -294,15 +373,19 @@ def import_csv(conn: sqlite3.Connection) -> None:
                     row.get("departamento", ""),
                     row.get("descripcion", ""),
                     stock,
+                    stock_unidad,
+                    stock_deposito,
+                    now_text(),
                 )
             )
 
     insert_sql = """
         INSERT INTO productos (
             archivo_origen, hoja_origen, fila_origen, codigo_item, codigo_barras,
-            codigo_articulo, producto, marca, proveedor, departamento, descripcion, stock
+            codigo_articulo, producto, marca, proveedor, departamento, descripcion,
+            stock, stock_unidad, stock_deposito, fecha_actualizacion
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
     if IS_POSTGRES:
         insert_sql += " ON CONFLICT (archivo_origen, hoja_origen, fila_origen) DO NOTHING"
@@ -344,6 +427,11 @@ class AppHandler(SimpleHTTPRequestHandler):
                 return
             self.handle_products(parsed.query)
             return
+        if parsed.path == "/api/productos/buscar":
+            if not self.require_user():
+                return
+            self.handle_products(parsed.query)
+            return
         if parsed.path == "/api/filtros":
             if not self.require_user():
                 return
@@ -353,6 +441,11 @@ class AppHandler(SimpleHTTPRequestHandler):
             if not self.require_user():
                 return
             self.handle_summary()
+            return
+        if parsed.path == "/api/inventario/resumen":
+            if not self.require_user():
+                return
+            self.handle_inventory_summary(parsed.query)
             return
         if parsed.path == "/api/dashboard":
             if not self.require_user():
@@ -386,6 +479,11 @@ class AppHandler(SimpleHTTPRequestHandler):
                 return
             self.handle_sale()
             return
+        if parsed.path == "/api/ventas":
+            if not self.require_user():
+                return
+            self.handle_cart_sale()
+            return
         if parsed.path == "/api/venta-carrito":
             if not self.require_user():
                 return
@@ -396,11 +494,25 @@ class AppHandler(SimpleHTTPRequestHandler):
                 return
             self.handle_product_update()
             return
+        if parsed.path == "/api/stock/ajustar":
+            if not self.require_user():
+                return
+            self.handle_stock_adjust()
+            return
+        if parsed.path == "/api/stock/importar-excel":
+            if not self.require_user(role="administrador"):
+                return
+            self.handle_excel_import()
+            return
         json_response(self, {"error": "Ruta no encontrada"}, 404)
 
     def read_json(self) -> dict:
         length = int(self.headers.get("Content-Length", "0"))
-        raw = self.rfile.read(length).decode("utf-8")
+        payload = self.rfile.read(length)
+        try:
+            raw = payload.decode("utf-8")
+        except UnicodeDecodeError:
+            raw = payload.decode("latin-1")
         return json.loads(raw or "{}")
 
     def current_user(self) -> sqlite3.Row | None:
@@ -494,7 +606,11 @@ class AppHandler(SimpleHTTPRequestHandler):
 
         sql = """
             SELECT id, codigo_item, codigo_barras, codigo_articulo, producto, marca,
-                   proveedor, departamento, descripcion, stock, ubicacion, stock_minimo, hoja_origen
+                   proveedor, departamento, descripcion, aplicacion,
+                   COALESCE(stock_unidad, stock, 0) AS stock_unidad,
+                   COALESCE(stock_deposito, 0) AS stock_deposito,
+                   COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0) AS stock,
+                   ubicacion, stock_minimo, hoja_origen, fecha_actualizacion
             FROM productos
         """
         values: list[object] = []
@@ -505,12 +621,14 @@ class AppHandler(SimpleHTTPRequestHandler):
                 like = f"%{term}%"
                 clauses.append(
                     """
-                    (codigo_item LIKE ? OR codigo_barras LIKE ? OR codigo_articulo LIKE ?
-                     OR producto LIKE ? OR marca LIKE ? OR proveedor LIKE ?
-                     OR departamento LIKE ? OR descripcion LIKE ?)
+                    (LOWER(COALESCE(codigo_item, '')) LIKE ? OR LOWER(COALESCE(codigo_barras, '')) LIKE ?
+                     OR LOWER(COALESCE(codigo_articulo, '')) LIKE ? OR LOWER(COALESCE(producto, '')) LIKE ?
+                     OR LOWER(COALESCE(marca, '')) LIKE ? OR LOWER(COALESCE(proveedor, '')) LIKE ?
+                     OR LOWER(COALESCE(departamento, '')) LIKE ? OR LOWER(COALESCE(descripcion, '')) LIKE ?
+                     OR LOWER(COALESCE(aplicacion, '')) LIKE ?)
                     """
                 )
-                values.extend([like] * 8)
+                values.extend([like.lower()] * 9)
             sql += " WHERE " + " AND ".join(clauses)
         filters = []
         if proveedor:
@@ -525,7 +643,7 @@ class AppHandler(SimpleHTTPRequestHandler):
         values.append(limit)
 
         conn = connect()
-        products = [dict(row) for row in execute(conn, sql, values).fetchall()]
+        products = [normalized_stock(row) for row in execute(conn, sql, values).fetchall()]
         conn.close()
         json_response(self, {"productos": products})
 
@@ -545,6 +663,7 @@ class AppHandler(SimpleHTTPRequestHandler):
             "proveedor": str(data.get("proveedor", "")).strip(),
             "departamento": str(data.get("departamento", "")).strip(),
             "descripcion": str(data.get("descripcion", "")).strip(),
+            "aplicacion": str(data.get("aplicacion", "")).strip(),
             "ubicacion": str(data.get("ubicacion", "")).strip(),
             "stock_minimo": to_int(data.get("stock_minimo")),
         }
@@ -561,7 +680,7 @@ class AppHandler(SimpleHTTPRequestHandler):
             UPDATE productos
             SET codigo_item = ?, codigo_barras = ?, codigo_articulo = ?, producto = ?,
                 marca = ?, proveedor = ?, departamento = ?, descripcion = ?,
-                ubicacion = ?, stock_minimo = ?
+                aplicacion = ?, ubicacion = ?, stock_minimo = ?, fecha_actualizacion = ?
             WHERE id = ?
             """,
             (
@@ -573,8 +692,10 @@ class AppHandler(SimpleHTTPRequestHandler):
                 fields["proveedor"],
                 fields["departamento"],
                 fields["descripcion"],
+                fields["aplicacion"],
                 fields["ubicacion"],
                 fields["stock_minimo"],
+                now_text(),
                 product_id,
             ),
         )
@@ -582,14 +703,18 @@ class AppHandler(SimpleHTTPRequestHandler):
         updated = execute(conn, 
             """
             SELECT id, codigo_item, codigo_barras, codigo_articulo, producto, marca,
-                   proveedor, departamento, descripcion, stock, ubicacion, stock_minimo, hoja_origen
+                   proveedor, departamento, descripcion, aplicacion,
+                   COALESCE(stock_unidad, stock, 0) AS stock_unidad,
+                   COALESCE(stock_deposito, 0) AS stock_deposito,
+                   COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0) AS stock,
+                   ubicacion, stock_minimo, hoja_origen, fecha_actualizacion
             FROM productos
             WHERE id = ?
             """,
             (product_id,),
         ).fetchone()
         conn.close()
-        json_response(self, {"ok": True, "producto": dict(updated)})
+        json_response(self, {"ok": True, "producto": normalized_stock(updated)})
 
     def handle_filters(self) -> None:
         conn = connect()
@@ -628,8 +753,8 @@ class AppHandler(SimpleHTTPRequestHandler):
             """
             SELECT
                 COUNT(*) AS productos,
-                SUM(CASE WHEN stock > 0 THEN 1 ELSE 0 END) AS con_stock,
-                SUM(stock) AS unidades,
+                SUM(CASE WHEN (COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0)) > 0 THEN 1 ELSE 0 END) AS con_stock,
+                SUM(COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0)) AS unidades,
                 COUNT(DISTINCT departamento) AS departamentos
             FROM productos
             """
@@ -643,10 +768,10 @@ class AppHandler(SimpleHTTPRequestHandler):
             """
             SELECT
                 COUNT(*) AS productos_total,
-                SUM(CASE WHEN stock > 0 THEN 1 ELSE 0 END) AS productos_con_stock,
-                SUM(CASE WHEN stock <= 0 THEN 1 ELSE 0 END) AS productos_sin_stock,
-                SUM(CASE WHEN stock_minimo > 0 AND stock <= stock_minimo THEN 1 ELSE 0 END) AS stock_critico,
-                COALESCE(SUM(stock), 0) AS unidades_disponibles,
+                SUM(CASE WHEN (COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0)) > 0 THEN 1 ELSE 0 END) AS productos_con_stock,
+                SUM(CASE WHEN (COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0)) <= 0 THEN 1 ELSE 0 END) AS productos_sin_stock,
+                SUM(CASE WHEN stock_minimo > 0 AND (COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0)) <= stock_minimo THEN 1 ELSE 0 END) AS stock_critico,
+                COALESCE(SUM(COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0)), 0) AS unidades_disponibles,
                 COUNT(DISTINCT proveedor) AS proveedores,
                 COUNT(DISTINCT departamento) AS categorias
             FROM productos
@@ -667,7 +792,7 @@ class AppHandler(SimpleHTTPRequestHandler):
                 """
                 SELECT COALESCE(NULLIF(TRIM(departamento), ''), 'Sin categoria') AS nombre,
                        COUNT(*) AS productos,
-                       COALESCE(SUM(stock), 0) AS unidades
+                       COALESCE(SUM(COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0)), 0) AS unidades
                 FROM productos
                 GROUP BY nombre
                 ORDER BY productos DESC
@@ -680,9 +805,10 @@ class AppHandler(SimpleHTTPRequestHandler):
             for row in execute(conn, 
                 """
                 SELECT id, codigo_item, producto, marca, proveedor, departamento,
-                       descripcion, stock, stock_minimo, ubicacion
+                       descripcion, COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0) AS stock, stock_minimo, ubicacion
                 FROM productos
-                WHERE stock <= 0 OR (stock_minimo > 0 AND stock <= stock_minimo)
+                WHERE (COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0)) <= 0
+                   OR (stock_minimo > 0 AND (COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0)) <= stock_minimo)
                 ORDER BY stock ASC, codigo_item
                 LIMIT 10
                 """
@@ -697,7 +823,7 @@ class AppHandler(SimpleHTTPRequestHandler):
                 FROM movimientos m
                 JOIN productos p ON p.id = m.producto_id
                 WHERE m.tipo = 'venta'
-                GROUP BY p.id
+                GROUP BY p.id, p.codigo_item, p.producto, p.marca, p.descripcion
                 ORDER BY unidades DESC
                 LIMIT 8
                 """
@@ -721,7 +847,7 @@ class AppHandler(SimpleHTTPRequestHandler):
         rows = execute(conn, 
             """
             SELECT m.id, m.fecha, m.tipo, m.cantidad, m.stock_anterior, m.stock_nuevo,
-                   m.nota, m.usuario_nombre,
+                   COALESCE(m.motivo, m.nota, '') AS motivo, m.nota, m.usuario_nombre,
                    p.codigo_item, p.producto, p.marca, p.descripcion
             FROM movimientos m
             JOIN productos p ON p.id = m.producto_id
@@ -755,7 +881,7 @@ class AppHandler(SimpleHTTPRequestHandler):
                 FROM movimientos m
                 JOIN productos p ON p.id = m.producto_id
                 WHERE m.tipo = 'venta'
-                GROUP BY p.id
+                GROUP BY p.id, p.codigo_item, p.producto, p.marca, p.descripcion
                 ORDER BY unidades DESC, operaciones DESC, p.codigo_item
                 LIMIT 10
                 """
@@ -786,6 +912,79 @@ class AppHandler(SimpleHTTPRequestHandler):
             },
         )
 
+    def apply_stock_out(self, conn, product_id: int, quantity: int) -> tuple[dict, int, int, int, int]:
+        product = execute(
+            conn,
+            """
+            SELECT id, codigo_item, producto, marca, descripcion,
+                   COALESCE(stock_unidad, stock, 0) AS stock_unidad,
+                   COALESCE(stock_deposito, 0) AS stock_deposito
+            FROM productos
+            WHERE id = ?
+            """,
+            (product_id,),
+        ).fetchone()
+        if product is None:
+            raise ValueError("Producto no encontrado")
+
+        product_dict = normalized_stock(product)
+        previous_total = product_dict["stock_total"]
+        if previous_total < quantity:
+            raise ValueError(f"No hay stock suficiente para {product_dict.get('codigo_item') or 'el producto'}")
+
+        previous_unit = product_dict["stock_unidad"]
+        previous_deposit = product_dict["stock_deposito"]
+        take_unit = min(previous_unit, quantity)
+        take_deposit = quantity - take_unit
+        new_unit = previous_unit - take_unit
+        new_deposit = previous_deposit - take_deposit
+        new_total = new_unit + new_deposit
+
+        execute(
+            conn,
+            """
+            UPDATE productos
+            SET stock_unidad = ?, stock_deposito = ?, stock = ?, fecha_actualizacion = ?
+            WHERE id = ?
+            """,
+            (new_unit, new_deposit, new_total, now_text(), product_id),
+        )
+        return product_dict, previous_total, new_total, new_unit, new_deposit
+
+    def register_movement(
+        self,
+        conn,
+        product_id: int,
+        kind: str,
+        quantity: int,
+        previous_stock: int,
+        new_stock: int,
+        reason: str,
+        user: dict,
+    ) -> None:
+        execute(
+            conn,
+            """
+            INSERT INTO movimientos (
+                producto_id, fecha, tipo, cantidad, stock_anterior, stock_nuevo,
+                nota, motivo, usuario_id, usuario_nombre
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                product_id,
+                now_text(),
+                kind,
+                quantity,
+                previous_stock,
+                new_stock,
+                reason,
+                reason,
+                user["id"],
+                user["nombre"],
+            ),
+        )
+
     def handle_sale(self) -> None:
         user = self.require_user()
         if user is None:
@@ -802,34 +1001,8 @@ class AppHandler(SimpleHTTPRequestHandler):
         conn = connect()
         try:
             begin_write(conn)
-            product = execute(conn, "SELECT id, stock FROM productos WHERE id = ?", (product_id,)).fetchone()
-            if product is None:
-                raise ValueError("Producto no encontrado")
-            if product["stock"] < quantity:
-                raise ValueError("No hay stock suficiente")
-
-            previous = int(product["stock"])
-            new_stock = previous - quantity
-            execute(conn, "UPDATE productos SET stock = ? WHERE id = ?", (new_stock, product_id))
-            execute(conn, 
-                """
-                INSERT INTO movimientos (
-                    producto_id, fecha, tipo, cantidad, stock_anterior, stock_nuevo,
-                    nota, usuario_id, usuario_nombre
-                )
-                VALUES (?, ?, 'venta', ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    product_id,
-                    datetime.now().isoformat(timespec="seconds"),
-                    quantity,
-                    previous,
-                    new_stock,
-                    note,
-                    user["id"],
-                    user["nombre"],
-                ),
-            )
+            _, previous, new_stock, new_unit, new_deposit = self.apply_stock_out(conn, product_id, quantity)
+            self.register_movement(conn, product_id, "venta", quantity, previous, new_stock, note or "venta", user)
             conn.commit()
         except ValueError as exc:
             conn.rollback()
@@ -838,7 +1011,10 @@ class AppHandler(SimpleHTTPRequestHandler):
         finally:
             conn.close()
 
-        json_response(self, {"ok": True, "stock_nuevo": new_stock})
+        json_response(
+            self,
+            {"ok": True, "stock_nuevo": new_stock, "stock_unidad": new_unit, "stock_deposito": new_deposit},
+        )
 
     def handle_cart_sale(self) -> None:
         user = self.require_user()
@@ -867,10 +1043,12 @@ class AppHandler(SimpleHTTPRequestHandler):
             begin_write(conn)
             placeholders = ",".join("?" for _ in quantities)
             products = {
-                row["id"]: row
+                row["id"]: normalized_stock(row)
                 for row in execute(conn, 
                     f"""
-                    SELECT id, codigo_item, producto, marca, descripcion, stock
+                    SELECT id, codigo_item, producto, marca, descripcion,
+                           COALESCE(stock_unidad, stock, 0) AS stock_unidad,
+                           COALESCE(stock_deposito, 0) AS stock_deposito
                     FROM productos
                     WHERE id IN ({placeholders})
                     """,
@@ -882,7 +1060,7 @@ class AppHandler(SimpleHTTPRequestHandler):
                 raise ValueError("Uno o mas productos no existen")
 
             for product_id, quantity in quantities.items():
-                if int(products[product_id]["stock"]) < quantity:
+                if int(products[product_id]["stock_total"]) < quantity:
                     raise ValueError(f"No hay stock suficiente para {products[product_id]['codigo_item']}")
 
             now = datetime.now().isoformat(timespec="seconds")
@@ -903,10 +1081,7 @@ class AppHandler(SimpleHTTPRequestHandler):
 
             response_items = []
             for product_id, quantity in quantities.items():
-                product = products[product_id]
-                previous = int(product["stock"])
-                new_stock = previous - quantity
-                execute(conn, "UPDATE productos SET stock = ? WHERE id = ?", (new_stock, product_id))
+                product, previous, new_stock, new_unit, new_deposit = self.apply_stock_out(conn, product_id, quantity)
                 execute(conn, 
                     """
                     INSERT INTO venta_items (
@@ -931,9 +1106,9 @@ class AppHandler(SimpleHTTPRequestHandler):
                     """
                     INSERT INTO movimientos (
                         producto_id, fecha, tipo, cantidad, stock_anterior, stock_nuevo,
-                        nota, usuario_id, usuario_nombre
+                        nota, motivo, usuario_id, usuario_nombre
                     )
-                    VALUES (?, ?, 'venta', ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, 'venta', ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         product_id,
@@ -941,6 +1116,7 @@ class AppHandler(SimpleHTTPRequestHandler):
                         quantity,
                         previous,
                         new_stock,
+                        f"Venta #{sale_id}" + (f" - {note}" if note else ""),
                         f"Venta #{sale_id}" + (f" - {note}" if note else ""),
                         user["id"],
                         user["nombre"],
@@ -952,6 +1128,8 @@ class AppHandler(SimpleHTTPRequestHandler):
                         "codigo_item": product["codigo_item"],
                         "cantidad": quantity,
                         "stock_nuevo": new_stock,
+                        "stock_unidad": new_unit,
+                        "stock_deposito": new_deposit,
                     }
                 )
 
@@ -972,6 +1150,278 @@ class AppHandler(SimpleHTTPRequestHandler):
                 "total_unidades": total_units,
                 "items": response_items,
             },
+        )
+
+    def handle_stock_adjust(self) -> None:
+        user = self.require_user()
+        if user is None:
+            return
+        data = self.read_json()
+        product_id = to_int(data.get("producto_id") or data.get("id"))
+        stock_unidad = to_int(data.get("stock_unidad"))
+        stock_deposito = to_int(data.get("stock_deposito"))
+        reason = str(data.get("motivo", "")).strip() or "ajuste manual"
+        if product_id <= 0:
+            json_response(self, {"error": "Seleccioná un producto válido"}, 400)
+            return
+        if stock_unidad < 0 or stock_deposito < 0:
+            json_response(self, {"error": "El stock no puede ser negativo"}, 400)
+            return
+
+        conn = connect()
+        try:
+            begin_write(conn)
+            product = execute(
+                conn,
+                """
+                SELECT id, COALESCE(stock_unidad, stock, 0) AS stock_unidad,
+                       COALESCE(stock_deposito, 0) AS stock_deposito
+                FROM productos
+                WHERE id = ?
+                """,
+                (product_id,),
+            ).fetchone()
+            if product is None:
+                raise ValueError("Producto no encontrado")
+            previous = normalized_stock(product)["stock_total"]
+            new_stock = stock_unidad + stock_deposito
+            execute(
+                conn,
+                """
+                UPDATE productos
+                SET stock_unidad = ?, stock_deposito = ?, stock = ?, fecha_actualizacion = ?
+                WHERE id = ?
+                """,
+                (stock_unidad, stock_deposito, new_stock, now_text(), product_id),
+            )
+            self.register_movement(
+                conn,
+                product_id,
+                "ajuste_stock",
+                new_stock - previous,
+                previous,
+                new_stock,
+                reason,
+                user,
+            )
+            conn.commit()
+        except ValueError as exc:
+            conn.rollback()
+            json_response(self, {"error": str(exc)}, 400)
+            return
+        finally:
+            conn.close()
+        json_response(
+            self,
+            {
+                "ok": True,
+                "stock_unidad": stock_unidad,
+                "stock_deposito": stock_deposito,
+                "stock_nuevo": new_stock,
+            },
+        )
+
+    def handle_inventory_summary(self, query: str) -> None:
+        params = parse_qs(query)
+        departamento = params.get("departamento", [""])[0].strip()
+        marca = params.get("marca", [""])[0].strip()
+        proveedor = params.get("proveedor", [""])[0].strip()
+        estado = params.get("estado", [""])[0].strip()
+        values: list[object] = []
+        filters = []
+        if departamento:
+            filters.append("departamento = ?")
+            values.append(departamento)
+        if marca:
+            filters.append("marca = ?")
+            values.append(marca)
+        if proveedor:
+            filters.append("proveedor = ?")
+            values.append(proveedor)
+        stock_expr = "(COALESCE(stock_unidad, stock, 0) + COALESCE(stock_deposito, 0))"
+        if estado == "sin_stock":
+            filters.append(f"{stock_expr} <= 0")
+        elif estado == "stock_bajo":
+            filters.append(f"stock_minimo > 0 AND {stock_expr} <= stock_minimo")
+        where = " WHERE " + " AND ".join(filters) if filters else ""
+
+        conn = connect()
+        resumen = execute(
+            conn,
+            f"""
+            SELECT COUNT(*) AS productos,
+                   COALESCE(SUM(COALESCE(stock_unidad, stock, 0)), 0) AS stock_unidad,
+                   COALESCE(SUM(COALESCE(stock_deposito, 0)), 0) AS stock_deposito,
+                   COALESCE(SUM({stock_expr}), 0) AS stock_total,
+                   SUM(CASE WHEN {stock_expr} <= 0 THEN 1 ELSE 0 END) AS sin_stock,
+                   SUM(CASE WHEN stock_minimo > 0 AND {stock_expr} <= stock_minimo THEN 1 ELSE 0 END) AS stock_bajo
+            FROM productos
+            {where}
+            """,
+            values,
+        ).fetchone()
+        por_departamento = [
+            dict(row)
+            for row in execute(
+                conn,
+                f"""
+                SELECT COALESCE(NULLIF(TRIM(departamento), ''), 'Sin categoría') AS departamento,
+                       COUNT(*) AS productos,
+                       COALESCE(SUM({stock_expr}), 0) AS stock_total
+                FROM productos
+                {where}
+                GROUP BY departamento
+                ORDER BY stock_total DESC, productos DESC
+                LIMIT 12
+                """,
+                values,
+            ).fetchall()
+        ]
+        criticos = [
+            normalized_stock(row)
+            for row in execute(
+                conn,
+                f"""
+                SELECT id, codigo_item, producto, marca, proveedor, departamento, descripcion,
+                       COALESCE(stock_unidad, stock, 0) AS stock_unidad,
+                       COALESCE(stock_deposito, 0) AS stock_deposito,
+                       stock_minimo
+                FROM productos
+                WHERE {stock_expr} <= 0 OR (stock_minimo > 0 AND {stock_expr} <= stock_minimo)
+                ORDER BY {stock_expr} ASC, codigo_item
+                LIMIT 80
+                """,
+            ).fetchall()
+        ]
+        conn.close()
+        json_response(self, {"resumen": dict(resumen), "por_departamento": por_departamento, "criticos": criticos})
+
+    def parse_excel_rows(self, content: bytes) -> tuple[list[dict], list[str]]:
+        if load_workbook is None:
+            return [], ["openpyxl no está instalado"]
+        workbook = load_workbook(io.BytesIO(content), data_only=True, read_only=True)
+        rows: list[dict] = []
+        errors: list[str] = []
+        for sheet in workbook.worksheets:
+            raw_rows = sheet.iter_rows(values_only=True)
+            headers = next(raw_rows, None)
+            if not headers:
+                continue
+            names = [str(value or "").strip() for value in headers]
+            for index, values in enumerate(raw_rows, start=2):
+                row = {names[i]: values[i] if i < len(values) else "" for i in range(len(names))}
+                if not any(str(value or "").strip() for value in row.values()):
+                    continue
+                codigo_item = str(pick(row, "Código Item", "Codigo Item", "codigo_item", "Código", "Codigo")).strip()
+                codigo_barras = str(pick(row, "Código de Barras", "Codigo de Barras", "codigo_barras", "Barra")).strip()
+                codigo_articulo = str(pick(row, "CodArticulo", "Cod Articulo", "Código Artículo", "codigo_articulo")).strip()
+                product_name = str(pick(row, "Producto", "Descripción corta", "Articulo", "Artículo")).strip()
+                if not (codigo_item or codigo_barras or codigo_articulo or product_name):
+                    errors.append(f"{sheet.title} fila {index}: fila sin código ni producto")
+                    continue
+                rows.append(
+                    {
+                        "hoja": sheet.title,
+                        "fila": index,
+                        "codigo_item": codigo_item,
+                        "codigo_barras": codigo_barras,
+                        "codigo_articulo": codigo_articulo,
+                        "producto": product_name,
+                        "marca": str(pick(row, "Marca")).strip(),
+                        "proveedor": str(pick(row, "Proveedor")).strip(),
+                        "departamento": str(pick(row, "Departamento", "Categoría", "Categoria", "Rubro")).strip(),
+                        "descripcion": str(pick(row, "Descripción", "Descripcion", "Detalle")).strip(),
+                        "aplicacion": str(pick(row, "Aplicación", "Aplicacion", "Vehículo", "Vehiculo")).strip(),
+                        "stock_unidad": to_int(pick(row, "Unidad", "Mostrador", "Stock Unidad", "Stock Mostrador")),
+                        "stock_deposito": to_int(pick(row, "Depósito", "Deposito", "Stock Depósito", "Stock Deposito", "Stock")),
+                    }
+                )
+        return rows, errors
+
+    def handle_excel_import(self) -> None:
+        user = self.require_user(role="administrador")
+        if user is None:
+            return
+        data = self.read_json()
+        filename = str(data.get("filename", "importacion.xlsx")).strip() or "importacion.xlsx"
+        preview_only = bool(data.get("preview", True))
+        content_b64 = str(data.get("content", ""))
+        try:
+            content = base64.b64decode(content_b64)
+        except Exception:
+            json_response(self, {"error": "Archivo inválido"}, 400)
+            return
+        rows, errors = self.parse_excel_rows(content)
+        preview = rows[:30]
+        if preview_only:
+            json_response(self, {"preview": preview, "total_filas": len(rows), "errores": errors[:50]})
+            return
+
+        conn = connect()
+        nuevos = actualizados = ignorados = 0
+        try:
+            begin_write(conn)
+            for row in rows:
+                stock_total = row["stock_unidad"] + row["stock_deposito"]
+                lookup_values = [row["codigo_item"], row["codigo_barras"], row["codigo_articulo"]]
+                existing = None
+                for column, value in zip(["codigo_item", "codigo_barras", "codigo_articulo"], lookup_values):
+                    if value:
+                        existing = execute(conn, f"SELECT id, COALESCE(stock_unidad, stock, 0) AS stock_unidad, COALESCE(stock_deposito, 0) AS stock_deposito FROM productos WHERE {column} = ? LIMIT 1", (value,)).fetchone()
+                        if existing:
+                            break
+                if existing:
+                    previous = normalized_stock(existing)["stock_total"]
+                    execute(
+                        conn,
+                        """
+                        UPDATE productos
+                        SET codigo_item = ?, codigo_barras = ?, codigo_articulo = ?, producto = ?,
+                            marca = ?, proveedor = ?, departamento = ?, descripcion = ?, aplicacion = ?,
+                            stock_unidad = ?, stock_deposito = ?, stock = ?, fecha_actualizacion = ?
+                        WHERE id = ?
+                        """,
+                        (
+                            row["codigo_item"], row["codigo_barras"], row["codigo_articulo"], row["producto"],
+                            row["marca"], row["proveedor"], row["departamento"], row["descripcion"], row["aplicacion"],
+                            row["stock_unidad"], row["stock_deposito"], stock_total, now_text(), existing["id"],
+                        ),
+                    )
+                    self.register_movement(conn, existing["id"], "importacion_excel", stock_total - previous, previous, stock_total, f"Importación Excel: {filename}", user)
+                    actualizados += 1
+                else:
+                    insert_sql = """
+                        INSERT INTO productos (
+                            archivo_origen, hoja_origen, fila_origen, codigo_item, codigo_barras,
+                            codigo_articulo, producto, marca, proveedor, departamento, descripcion, aplicacion,
+                            stock, stock_unidad, stock_deposito, fecha_actualizacion
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """
+                    if IS_POSTGRES:
+                        insert_sql += " RETURNING id"
+                    cursor = execute(
+                        conn,
+                        insert_sql,
+                        (
+                            filename, row["hoja"], row["fila"], row["codigo_item"], row["codigo_barras"],
+                            row["codigo_articulo"], row["producto"], row["marca"], row["proveedor"], row["departamento"],
+                            row["descripcion"], row["aplicacion"], stock_total, row["stock_unidad"], row["stock_deposito"], now_text(),
+                        ),
+                    )
+                    product_id = cursor.fetchone()["id"] if IS_POSTGRES else cursor.lastrowid
+                    self.register_movement(conn, product_id, "importacion_excel", stock_total, 0, stock_total, f"Importación Excel: {filename}", user)
+                    nuevos += 1
+            conn.commit()
+        except Exception as exc:
+            conn.rollback()
+            json_response(self, {"error": f"No se pudo importar: {exc}"}, 400)
+            return
+        finally:
+            conn.close()
+        json_response(
+            self,
+            {"ok": True, "nuevos": nuevos, "actualizados": actualizados, "ignorados": ignorados, "errores": errors[:50]},
         )
 
 

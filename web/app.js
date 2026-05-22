@@ -43,6 +43,7 @@ const editMarca = document.querySelector("#editMarca");
 const editProveedor = document.querySelector("#editProveedor");
 const editDepartamento = document.querySelector("#editDepartamento");
 const editUbicacion = document.querySelector("#editUbicacion");
+const editAplicacion = document.querySelector("#editAplicacion");
 const editStockMinimo = document.querySelector("#editStockMinimo");
 const editDescripcion = document.querySelector("#editDescripcion");
 const salesOperations = document.querySelector("#salesOperations");
@@ -71,6 +72,29 @@ const noteInput = document.querySelector("#noteInput");
 const saleMessage = document.querySelector("#saleMessage");
 const summary = document.querySelector("#summary");
 const movements = document.querySelector("#movements");
+const inventoryProviderFilter = document.querySelector("#inventoryProviderFilter");
+const inventoryCategoryFilter = document.querySelector("#inventoryCategoryFilter");
+const inventoryStatusFilter = document.querySelector("#inventoryStatusFilter");
+const refreshInventoryButton = document.querySelector("#refreshInventoryButton");
+const inventoryProducts = document.querySelector("#inventoryProducts");
+const inventoryUnit = document.querySelector("#inventoryUnit");
+const inventoryDeposit = document.querySelector("#inventoryDeposit");
+const inventoryTotal = document.querySelector("#inventoryTotal");
+const inventoryLow = document.querySelector("#inventoryLow");
+const inventoryEmpty = document.querySelector("#inventoryEmpty");
+const inventoryDepartments = document.querySelector("#inventoryDepartments");
+const inventoryCritical = document.querySelector("#inventoryCritical");
+const stockAdjustForm = document.querySelector("#stockAdjustForm");
+const stockSelectedProduct = document.querySelector("#stockSelectedProduct");
+const stockUnitInput = document.querySelector("#stockUnitInput");
+const stockDepositInput = document.querySelector("#stockDepositInput");
+const stockReasonInput = document.querySelector("#stockReasonInput");
+const stockAdjustMessage = document.querySelector("#stockAdjustMessage");
+const excelFileInput = document.querySelector("#excelFileInput");
+const previewExcelButton = document.querySelector("#previewExcelButton");
+const importExcelButton = document.querySelector("#importExcelButton");
+const excelMessage = document.querySelector("#excelMessage");
+const excelPreview = document.querySelector("#excelPreview");
 
 document.body.classList.add("locked");
 const bootFallback = window.setTimeout(hideBootScreen, 3500);
@@ -130,6 +154,8 @@ async function loadFilters() {
   const data = await response.json();
   fillSelect(providerFilter, data.proveedores || [], "Todos");
   fillSelect(categoryFilter, data.categorias || [], "Todas");
+  fillSelect(inventoryProviderFilter, data.proveedores || [], "Todos");
+  fillSelect(inventoryCategoryFilter, data.categorias || [], "Todos");
 }
 
 function fillSelect(select, values, emptyLabel) {
@@ -148,7 +174,7 @@ function renderProducts() {
   if (state.products.length === 0) {
     productsBody.innerHTML = `
       <tr>
-        <td colspan="5" class="muted">No se encontraron productos.</td>
+        <td colspan="11" class="muted">No se encontraron productos.</td>
       </tr>
     `;
     return;
@@ -159,17 +185,21 @@ function renderProducts() {
       const selected = state.selected?.id === product.id ? "selected" : "";
       return `
         <tr class="${selected}" data-id="${product.id}">
-          <td>
-            <span class="product-code">${escapeHtml(product.codigo_item)}</span>
-            <div class="muted">${escapeHtml(product.codigo_barras || product.codigo_articulo)}</div>
-          </td>
+          <td><span class="product-code">${escapeHtml(product.codigo_item)}</span></td>
+          <td>${escapeHtml(product.codigo_barras)}</td>
+          <td>${escapeHtml(product.codigo_articulo)}</td>
           <td>${escapeHtml(product.producto)}</td>
           <td>${escapeHtml(product.marca)}</td>
-          <td>
-            ${escapeHtml(product.descripcion)}
-            <div class="muted">${escapeHtml(product.hoja_origen)}</div>
-          </td>
+          <td>${escapeHtml(product.proveedor)}</td>
+          <td>${escapeHtml(product.departamento)}</td>
+          <td class="${stockClass(product.stock_unidad)}">${escapeHtml(product.stock_unidad)}</td>
+          <td class="${stockClass(product.stock_deposito)}">${escapeHtml(product.stock_deposito)}</td>
           <td class="${stockClass(product.stock)}">${escapeHtml(product.stock)}</td>
+          <td class="row-actions">
+            <button type="button" data-action="detail">Ver</button>
+            <button type="button" data-action="sell">Vender</button>
+            <button type="button" data-action="stock">Stock</button>
+          </td>
         </tr>
       `;
     })
@@ -185,8 +215,15 @@ function selectProduct(product) {
     <strong>${escapeHtml(product.codigo_item)} - ${escapeHtml(product.producto)}</strong>
     <span>${escapeHtml(product.marca)}</span>
     <p>${escapeHtml(product.descripcion)}</p>
-    <div>Stock actual: <strong>${escapeHtml(product.stock)}</strong></div>
+    <div>Mostrador: <strong>${escapeHtml(product.stock_unidad)}</strong> | Depósito: <strong>${escapeHtml(product.stock_deposito)}</strong> | Total: <strong>${escapeHtml(product.stock)}</strong></div>
   `;
+  stockSelectedProduct.className = "selected-box";
+  stockSelectedProduct.innerHTML = `
+    <strong>${escapeHtml(product.codigo_item)} - ${escapeHtml(product.producto)}</strong>
+    <span>${escapeHtml(product.marca)} | ${escapeHtml(product.proveedor)}</span>
+  `;
+  stockUnitInput.value = Number(product.stock_unidad || 0);
+  stockDepositInput.value = Number(product.stock_deposito || 0);
   renderProducts();
   fillProductEditor(product);
   if (state.user?.rol === "administrador") {
@@ -207,6 +244,7 @@ function fillProductEditor(product) {
   editProveedor.value = product.proveedor || "";
   editDepartamento.value = product.departamento || "";
   editUbicacion.value = product.ubicacion || "";
+  editAplicacion.value = product.aplicacion || "";
   editStockMinimo.value = product.stock_minimo || 0;
   editDescripcion.value = product.descripcion || "";
 }
@@ -243,8 +281,11 @@ async function registerSale(event) {
   setMessage(`Venta registrada. Stock nuevo: ${data.stock_nuevo}`, "ok");
   noteInput.value = "";
   state.selected.stock = data.stock_nuevo;
+  state.selected.stock_unidad = data.stock_unidad;
+  state.selected.stock_deposito = data.stock_deposito;
   await loadSummary();
   await searchProducts();
+  await loadInventory();
   const fresh = state.products.find((product) => product.id === state.selected.id);
   if (fresh) {
     selectProduct(fresh);
@@ -288,7 +329,7 @@ function renderCart() {
         <article class="cart-line" data-id="${item.id}">
           <div>
             <strong>${escapeHtml(item.codigo_item)} - ${escapeHtml(item.producto)}</strong>
-            <span class="muted">${escapeHtml(item.marca)} | Stock: ${escapeHtml(item.stock)}</span>
+            <span class="muted">${escapeHtml(item.marca)} | Mostrador: ${escapeHtml(item.stock_unidad)} | Depósito: ${escapeHtml(item.stock_deposito)} | Total: ${escapeHtml(item.stock)}</span>
           </div>
           <input class="cart-quantity" type="number" min="1" max="${escapeHtml(item.stock)}" value="${escapeHtml(item.cantidad)}" />
           <button class="icon-button remove-cart-item" type="button">X</button>
@@ -337,6 +378,7 @@ async function confirmCartSale(event) {
   await searchProducts();
   await loadSalesSummary();
   await loadDashboard();
+  await loadInventory();
 }
 
 function setMessage(text, type) {
@@ -368,6 +410,7 @@ async function loadMovements(productId = 0) {
           <div>${escapeHtml(movement.codigo_item)} - ${escapeHtml(movement.producto)}</div>
           <div>Stock: ${escapeHtml(movement.stock_anterior)} -> ${escapeHtml(movement.stock_nuevo)}</div>
           ${movement.usuario_nombre ? `<div>Usuario: ${escapeHtml(movement.usuario_nombre)}</div>` : ""}
+          ${movement.motivo ? `<div>Motivo: ${escapeHtml(movement.motivo)}</div>` : ""}
           ${movement.nota ? `<div class="muted">${escapeHtml(movement.nota)}</div>` : ""}
         </div>
       `,
@@ -396,7 +439,7 @@ function unlockApp(user) {
   document.body.classList.remove("locked");
   userLabel.textContent = `${user.nombre} (${user.rol})`;
   updateMenuByRole();
-  setActiveMenu("inicio");
+  setActiveMenu("dashboard");
 }
 
 function updateMenuByRole() {
@@ -415,11 +458,11 @@ function setActiveMenu(view) {
   });
 
   const notes = {
-    inicio: "Módulo actual: inicio del sistema.",
     dashboard: "Módulo actual: tablero ejecutivo y control general.",
     venta: "Módulo actual: ventas y descuento de stock.",
-    productos: "Módulo actual: catálogo y edición de productos.",
-    stock: "Módulo actual: control de stock.",
+    catalogo: "Módulo actual: catálogo y edición de productos.",
+    inventario: "Módulo actual: inventario y stock crítico.",
+    "actualizar-stock": "Módulo actual: actualización manual e importación Excel.",
     movimientos: "Movimientos: historial disponible para administrador.",
     usuarios: "Usuarios: módulo pendiente de habilitación.",
     ajustes: "Ajustes: módulo pendiente de configuración.",
@@ -429,12 +472,206 @@ function setActiveMenu(view) {
   if (view === "dashboard") {
     loadDashboard();
   }
-  if (view === "productos") {
+  if (view === "catalogo" || view === "venta") {
     searchInput.focus();
+  }
+  if (view === "inventario") {
+    loadInventory();
   }
   if (view === "venta") {
     selectedProduct.scrollIntoView({ block: "nearest" });
   }
+}
+
+async function loadInventory() {
+  const params = new URLSearchParams({
+    proveedor: inventoryProviderFilter.value,
+    departamento: inventoryCategoryFilter.value,
+    estado: inventoryStatusFilter.value,
+  });
+  const response = await fetch(`/api/inventario/resumen?${params.toString()}`);
+  if (!ensureAllowed(response)) return;
+  const data = await response.json();
+  const resumen = data.resumen || {};
+  inventoryProducts.textContent = resumen.productos ?? 0;
+  inventoryUnit.textContent = resumen.stock_unidad ?? 0;
+  inventoryDeposit.textContent = resumen.stock_deposito ?? 0;
+  inventoryTotal.textContent = resumen.stock_total ?? 0;
+  inventoryLow.textContent = resumen.stock_bajo ?? 0;
+  inventoryEmpty.textContent = resumen.sin_stock ?? 0;
+  renderInventoryDepartments(data.por_departamento || []);
+  renderInventoryCritical(data.criticos || []);
+}
+
+function renderInventoryDepartments(rows) {
+  if (rows.length === 0) {
+    inventoryDepartments.innerHTML = `<div class="empty-state">Sin datos para mostrar.</div>`;
+    return;
+  }
+  inventoryDepartments.innerHTML = rows
+    .map(
+      (row) => `
+        <article class="metric-row">
+          <div>
+            <strong>${escapeHtml(row.departamento)}</strong>
+            <span>${escapeHtml(row.productos)} productos</span>
+          </div>
+          <div class="metric-value">${escapeHtml(row.stock_total)} un.</div>
+        </article>
+      `,
+    )
+    .join("");
+}
+
+function renderInventoryCritical(rows) {
+  if (rows.length === 0) {
+    inventoryCritical.innerHTML = `<div class="empty-state">Sin productos críticos.</div>`;
+    return;
+  }
+  inventoryCritical.innerHTML = rows
+    .map(
+      (row) => `
+        <article class="metric-row">
+          <div>
+            <strong>${escapeHtml(row.codigo_item)} - ${escapeHtml(row.producto)}</strong>
+            <span>${escapeHtml(row.marca)} | ${escapeHtml(row.proveedor)}</span>
+          </div>
+          <div class="metric-value">${escapeHtml(row.stock_total)} un.</div>
+        </article>
+      `,
+    )
+    .join("");
+}
+
+async function saveStockAdjust(event) {
+  event.preventDefault();
+  if (!state.selected) {
+    stockAdjustMessage.textContent = "Seleccioná un producto desde el catálogo.";
+    stockAdjustMessage.className = "message error";
+    return;
+  }
+  const response = await fetch("/api/stock/ajustar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      producto_id: state.selected.id,
+      stock_unidad: stockUnitInput.value,
+      stock_deposito: stockDepositInput.value,
+      motivo: stockReasonInput.value,
+    }),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    stockAdjustMessage.textContent = data.error || "No se pudo actualizar el stock.";
+    stockAdjustMessage.className = "message error";
+    return;
+  }
+  stockAdjustMessage.textContent = `Stock actualizado. Total: ${data.stock_nuevo}`;
+  stockAdjustMessage.className = "message ok";
+  await loadSummary();
+  await searchProducts();
+  await loadInventory();
+  await loadMovements(state.selected.id);
+}
+
+function readExcelFile() {
+  const file = excelFileInput.files?.[0];
+  if (!file) {
+    excelMessage.textContent = "Seleccioná un archivo .xlsx.";
+    excelMessage.className = "message error";
+    return Promise.resolve(null);
+  }
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const bytes = new Uint8Array(reader.result);
+      let binary = "";
+      bytes.forEach((byte) => {
+        binary += String.fromCharCode(byte);
+      });
+      resolve({ filename: file.name, content: btoa(binary) });
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+async function previewExcel() {
+  const file = await readExcelFile();
+  if (!file) return;
+  excelMessage.textContent = "Leyendo archivo...";
+  excelMessage.className = "message";
+  const response = await fetch("/api/stock/importar-excel", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...file, preview: true }),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    excelMessage.textContent = data.error || "No se pudo leer el Excel.";
+    excelMessage.className = "message error";
+    return;
+  }
+  importExcelButton.disabled = false;
+  excelMessage.textContent = `Vista previa lista: ${data.total_filas} filas detectadas.`;
+  excelMessage.className = "message ok";
+  renderExcelPreview(data.preview || [], data.errores || []);
+}
+
+function renderExcelPreview(rows, errors) {
+  if (rows.length === 0) {
+    excelPreview.innerHTML = `<div class="empty-state">No hay filas para previsualizar.</div>`;
+    return;
+  }
+  excelPreview.innerHTML = `
+    <table>
+      <thead>
+        <tr><th>Código</th><th>Producto</th><th>Marca</th><th>Mostrador</th><th>Depósito</th></tr>
+      </thead>
+      <tbody>
+        ${rows
+          .map(
+            (row) => `
+              <tr>
+                <td>${escapeHtml(row.codigo_item || row.codigo_barras || row.codigo_articulo)}</td>
+                <td>${escapeHtml(row.producto)}</td>
+                <td>${escapeHtml(row.marca)}</td>
+                <td>${escapeHtml(row.stock_unidad)}</td>
+                <td>${escapeHtml(row.stock_deposito)}</td>
+              </tr>
+            `,
+          )
+          .join("")}
+      </tbody>
+    </table>
+    ${errors.length ? `<div class="message error">${escapeHtml(errors.length)} advertencias encontradas.</div>` : ""}
+  `;
+}
+
+async function importExcel() {
+  const file = await readExcelFile();
+  if (!file) return;
+  importExcelButton.disabled = true;
+  excelMessage.textContent = "Importando archivo...";
+  excelMessage.className = "message";
+  const response = await fetch("/api/stock/importar-excel", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...file, preview: false }),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    excelMessage.textContent = data.error || "No se pudo importar.";
+    excelMessage.className = "message error";
+    importExcelButton.disabled = false;
+    return;
+  }
+  excelMessage.textContent = `Importación completa: ${data.nuevos} nuevos, ${data.actualizados} actualizados, ${data.ignorados} ignorados.`;
+  excelMessage.className = "message ok";
+  await loadFilters();
+  await searchProducts();
+  await loadInventory();
+  await loadMovements();
 }
 
 async function loadDashboard() {
@@ -533,6 +770,7 @@ async function saveProduct(event) {
       proveedor: editProveedor.value,
       departamento: editDepartamento.value,
       ubicacion: editUbicacion.value,
+      aplicacion: editAplicacion.value,
       stock_minimo: editStockMinimo.value,
       descripcion: editDescripcion.value,
     }),
@@ -641,6 +879,7 @@ async function loadInitialData() {
   await loadMovements();
   await loadSalesSummary();
   await loadDashboard();
+  await loadInventory();
   renderCart();
 }
 
@@ -648,7 +887,15 @@ productsBody.addEventListener("click", (event) => {
   const row = event.target.closest("tr[data-id]");
   if (!row) return;
   const product = state.products.find((item) => item.id === Number(row.dataset.id));
-  if (product) selectProduct(product);
+  if (!product) return;
+  selectProduct(product);
+  const action = event.target.closest("button")?.dataset.action;
+  if (action === "sell") {
+    addToCart(product);
+    setActiveMenu("venta");
+  } else if (action === "stock") {
+    setActiveMenu("actualizar-stock");
+  }
 });
 
 searchButton.addEventListener("click", searchProducts);
@@ -670,6 +917,19 @@ clearFiltersButton.addEventListener("click", () => {
   providerFilter.value = "";
   categoryFilter.value = "";
   searchProducts();
+});
+inventoryProviderFilter.addEventListener("change", loadInventory);
+inventoryCategoryFilter.addEventListener("change", loadInventory);
+inventoryStatusFilter.addEventListener("change", loadInventory);
+refreshInventoryButton.addEventListener("click", loadInventory);
+stockAdjustForm.addEventListener("submit", saveStockAdjust);
+previewExcelButton.addEventListener("click", previewExcel);
+importExcelButton.addEventListener("click", importExcel);
+excelFileInput.addEventListener("change", () => {
+  importExcelButton.disabled = true;
+  excelPreview.innerHTML = "";
+  excelMessage.textContent = "";
+  excelMessage.className = "message";
 });
 saleForm.addEventListener("submit", registerSale);
 addSelectedToCart.addEventListener("click", () => addToCart(state.selected));

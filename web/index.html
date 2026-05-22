@@ -71,7 +71,7 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="/styles.css?v=20260522-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260522-2" />
   </head>
   <body class="booting">
     <div id="bootScreen" class="boot-screen" role="status" aria-live="polite">
@@ -167,11 +167,7 @@
           <span>Menu</span>
           <strong>FCD</strong>
         </div>
-        <button class="menu-item active" type="button" data-view="inicio">
-          <span class="menu-icon">I</span>
-          <span>Inicio</span>
-        </button>
-        <button class="menu-item" type="button" data-view="dashboard">
+        <button class="menu-item active" type="button" data-view="dashboard">
           <span class="menu-icon">D</span>
           <span>Dashboard</span>
         </button>
@@ -179,13 +175,17 @@
           <span class="menu-icon">V</span>
           <span>Ventas</span>
         </button>
-        <button class="menu-item" type="button" data-view="productos">
-          <span class="menu-icon">P</span>
-          <span>Productos</span>
+        <button class="menu-item" type="button" data-view="catalogo">
+          <span class="menu-icon">C</span>
+          <span>Catálogo</span>
         </button>
-        <button class="menu-item" type="button" data-view="stock">
-          <span class="menu-icon">S</span>
-          <span>Stock</span>
+        <button class="menu-item" type="button" data-view="inventario">
+          <span class="menu-icon">I</span>
+          <span>Inventario</span>
+        </button>
+        <button class="menu-item admin-only" type="button" data-view="actualizar-stock">
+          <span class="menu-icon">A</span>
+          <span>Actualizar stock</span>
         </button>
         <button class="menu-item admin-only" type="button" data-view="movimientos">
           <span class="menu-icon">M</span>
@@ -199,7 +199,7 @@
           <span class="menu-icon">A</span>
           <span>Ajustes</span>
         </button>
-        <div class="menu-note" id="menuNote">Módulo actual: Inicio.</div>
+        <div class="menu-note" id="menuNote">Módulo actual: Dashboard.</div>
       </nav>
 
       <section class="workspace">
@@ -227,7 +227,7 @@
         </section>
 
         <div class="workspace-scroll">
-          <section class="panel home-module module-screen is-active" data-module="inicio">
+          <section class="panel home-module module-screen" data-module="inicio">
             <div class="section-head">
               <div>
                 <h2>Inicio</h2>
@@ -250,11 +250,11 @@
             </div>
           </section>
 
-          <section class="panel search-panel module-screen" data-module="productos">
+          <section class="panel search-panel module-screen" data-module="catalogo">
             <div class="section-head">
               <div>
                 <h2>Catálogo</h2>
-                <p>Resultados dentro del módulo, sin superposición.</p>
+                <p>Búsqueda rápida por código, producto, marca, proveedor, departamento y aplicación.</p>
               </div>
               <button id="refreshButton" type="button">Actualizar</button>
             </div>
@@ -263,11 +263,17 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Código</th>
+                    <th>Código Item</th>
+                    <th>Código de Barras</th>
+                    <th>CodArticulo</th>
                     <th>Producto</th>
                     <th>Marca</th>
-                    <th>Descripción</th>
-                    <th>Stock</th>
+                    <th>Proveedor</th>
+                    <th>Departamento</th>
+                    <th>Mostrador</th>
+                    <th>Depósito</th>
+                    <th>Total</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody id="productsBody"></tbody>
@@ -384,7 +390,7 @@
         </div>
           </section>
 
-          <section class="panel product-dashboard module-screen" id="productDashboard" data-module="productos">
+          <section class="panel product-dashboard module-screen" id="productDashboard" data-module="catalogo">
         <div class="section-head">
           <div>
             <h2>Productos</h2>
@@ -426,6 +432,10 @@
             <input id="editUbicacion" type="text" placeholder="Ej: DEP-EST3-FILA2-CAJ4" />
           </label>
           <label>
+            Aplicación / vehículo
+            <input id="editAplicacion" type="text" />
+          </label>
+          <label>
             Stock mínimo
             <input id="editStockMinimo" type="number" min="0" step="1" />
           </label>
@@ -450,14 +460,96 @@
             <div class="empty-state">Este módulo se activará cuando apruebes la Etapa 1.</div>
           </section>
 
-          <section class="panel placeholder-module module-screen" data-module="stock">
+          <section class="panel inventory-module module-screen" data-module="inventario">
             <div class="section-head">
               <div>
-                <h2>Stock</h2>
-                <p>Control de existencias. Pendiente de aprobación de la base visual.</p>
+                <h2>Inventario</h2>
+                <p>Resumen de stock, productos críticos y existencias por departamento.</p>
+              </div>
+              <button id="refreshInventoryButton" type="button">Actualizar</button>
+            </div>
+            <section class="catalog-search compact-filters">
+              <div class="filter-box">
+                <label for="inventoryProviderFilter">Proveedor</label>
+                <select id="inventoryProviderFilter"><option value="">Todos</option></select>
+              </div>
+              <div class="filter-box">
+                <label for="inventoryCategoryFilter">Departamento</label>
+                <select id="inventoryCategoryFilter"><option value="">Todos</option></select>
+              </div>
+              <div class="filter-box">
+                <label for="inventoryStatusFilter">Estado</label>
+                <select id="inventoryStatusFilter">
+                  <option value="">Todos</option>
+                  <option value="stock_bajo">Stock bajo</option>
+                  <option value="sin_stock">Sin stock</option>
+                </select>
+              </div>
+            </section>
+            <div class="kpi-grid inventory-kpis">
+              <article class="kpi-card"><span>Productos</span><strong id="inventoryProducts">0</strong></article>
+              <article class="kpi-card"><span>Stock mostrador</span><strong id="inventoryUnit">0</strong></article>
+              <article class="kpi-card"><span>Stock depósito</span><strong id="inventoryDeposit">0</strong></article>
+              <article class="kpi-card"><span>Stock total</span><strong id="inventoryTotal">0</strong></article>
+              <article class="kpi-card warning"><span>Stock bajo</span><strong id="inventoryLow">0</strong></article>
+              <article class="kpi-card danger"><span>Sin stock</span><strong id="inventoryEmpty">0</strong></article>
+            </div>
+            <div class="dashboard-grid">
+              <section class="dashboard-block light-block">
+                <h3>Stock por departamento</h3>
+                <div id="inventoryDepartments" class="metric-list"></div>
+              </section>
+              <section class="dashboard-block light-block">
+                <h3>Productos críticos</h3>
+                <div id="inventoryCritical" class="metric-list"></div>
+              </section>
+            </div>
+          </section>
+
+          <section class="panel stock-update-module module-screen" data-module="actualizar-stock">
+            <div class="section-head">
+              <div>
+                <h2>Actualizar stock</h2>
+                <p>Ajuste manual e importación de listas Excel.</p>
               </div>
             </div>
-            <div class="empty-state">Este módulo se activará cuando apruebes la Etapa 1.</div>
+            <div class="stock-update-grid">
+              <form id="stockAdjustForm" class="stock-card">
+                <h3>Ajuste manual</h3>
+                <div id="stockSelectedProduct" class="empty-state">Seleccioná un producto desde el catálogo.</div>
+                <label>
+                  Stock unidad / mostrador
+                  <input id="stockUnitInput" type="number" min="0" step="1" value="0" />
+                </label>
+                <label>
+                  Stock depósito
+                  <input id="stockDepositInput" type="number" min="0" step="1" value="0" />
+                </label>
+                <label>
+                  Motivo
+                  <select id="stockReasonInput">
+                    <option value="compra">Compra</option>
+                    <option value="ajuste manual">Ajuste manual</option>
+                    <option value="devolución">Devolución</option>
+                    <option value="corrección de inventario">Corrección de inventario</option>
+                    <option value="transferencia depósito/mostrador">Transferencia depósito/mostrador</option>
+                  </select>
+                </label>
+                <button type="submit">Guardar stock</button>
+                <p id="stockAdjustMessage" class="message"></p>
+              </form>
+
+              <section class="stock-card">
+                <h3>Importar Excel</h3>
+                <input id="excelFileInput" type="file" accept=".xlsx" />
+                <div class="cart-actions">
+                  <button id="previewExcelButton" type="button">Vista previa</button>
+                  <button id="importExcelButton" class="secondary-button" type="button" disabled>Importar</button>
+                </div>
+                <p id="excelMessage" class="message"></p>
+                <div id="excelPreview" class="table-wrap mini-table"></div>
+              </section>
+            </div>
           </section>
 
           <section class="panel placeholder-module module-screen" data-module="ajustes">
@@ -503,7 +595,7 @@
       </aside>
     </main>
 
-    <script src="/app.js?v=20260522-1"></script>
+    <script src="/app.js?v=20260522-2"></script>
     <script>
       window.setTimeout(function () {
         document.body.classList.remove("booting");

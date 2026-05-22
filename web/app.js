@@ -13,6 +13,8 @@ const passwordInput = document.querySelector("#passwordInput");
 const loginMessage = document.querySelector("#loginMessage");
 const userLabel = document.querySelector("#userLabel");
 const logoutButton = document.querySelector("#logoutButton");
+const menuToggle = document.querySelector("#menuToggle");
+const sideMenu = document.querySelector("#sideMenu");
 const menuItems = document.querySelectorAll(".menu-item");
 const adminOnlyItems = document.querySelectorAll(".admin-only");
 const moduleScreens = document.querySelectorAll(".module-screen");
@@ -429,6 +431,8 @@ function ensureAllowed(response) {
 function lockApp() {
   state.user = null;
   document.body.classList.add("locked");
+  document.body.classList.remove("menu-open");
+  menuToggle?.setAttribute("aria-expanded", "false");
   userLabel.textContent = "Sin usuario";
   productsBody.innerHTML = "";
   movements.innerHTML = "";
@@ -450,6 +454,8 @@ function updateMenuByRole() {
 
 function setActiveMenu(view) {
   document.body.dataset.module = view;
+  document.body.classList.remove("menu-open");
+  menuToggle?.setAttribute("aria-expanded", "false");
   menuItems.forEach((item) => {
     item.classList.toggle("active", item.dataset.view === view);
   });
@@ -959,12 +965,16 @@ cartItems.addEventListener("click", (event) => {
 });
 loginForm.addEventListener("submit", login);
 logoutButton.addEventListener("click", logout);
-closeSalesDashboard.addEventListener("click", () => salesDashboard.classList.remove("is-open"));
-closeProductDashboard.addEventListener("click", () => productDashboard.classList.remove("is-open"));
+closeSalesDashboard?.addEventListener("click", () => salesDashboard.classList.remove("is-open"));
+closeProductDashboard?.addEventListener("click", () => productDashboard.classList.remove("is-open"));
 refreshDashboardButton.addEventListener("click", loadDashboard);
 productEditorForm.addEventListener("submit", saveProduct);
 menuItems.forEach((item) => {
   item.addEventListener("click", () => setActiveMenu(item.dataset.view));
+});
+menuToggle?.addEventListener("click", () => {
+  const isOpen = document.body.classList.toggle("menu-open");
+  menuToggle.setAttribute("aria-expanded", String(isOpen));
 });
 
 async function startApp() {

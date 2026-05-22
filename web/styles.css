@@ -1724,3 +1724,290 @@ body:not(.locked) .search-panel.module-screen.is-active {
     grid-template-columns: 1fr;
   }
 }
+
+/* ERP navigation final override */
+body:not(.locked) {
+  height: 100dvh;
+  overflow: hidden !important;
+  background: #eef2f7;
+}
+
+body:not(.locked) .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  height: 72px !important;
+  min-height: 72px;
+  max-height: 72px;
+  padding: 10px 18px;
+  border-bottom: 1px solid #dbe2ea;
+  background: #ffffff;
+}
+
+.menu-toggle {
+  display: none;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  gap: 4px;
+  padding: 9px;
+  border-radius: 8px;
+  background: #102447;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 99px;
+  background: #ffffff;
+}
+
+body:not(.locked) .layout.erp-shell {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  gap: 14px;
+  height: calc(100dvh - 72px) !important;
+  padding: 14px;
+  overflow: hidden !important;
+}
+
+body:not(.locked)[data-module="venta"] .layout.erp-shell {
+  grid-template-columns: 264px minmax(0, 1fr) 360px;
+}
+
+body:not(.locked) .side-menu {
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  min-height: 0;
+  padding: 14px;
+  overflow-y: auto;
+  border: 1px solid #1e3357;
+  border-radius: 12px;
+  background: #102447;
+  box-shadow: 0 14px 34px rgba(16, 36, 71, 0.18);
+}
+
+.menu-brand {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 8px 6px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.menu-brand img {
+  width: 54px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.menu-brand strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.menu-brand span {
+  color: #b8c4d6;
+  font-size: 12px;
+}
+
+body:not(.locked) .menu-item {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #d8e1ef;
+  text-align: left;
+  font-weight: 800;
+}
+
+body:not(.locked) .menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body:not(.locked) .menu-item.active {
+  border-color: rgba(211, 47, 47, 0.42);
+  background: #d32f2f;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(211, 47, 47, 0.2);
+}
+
+.menu-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.09);
+  color: currentColor;
+}
+
+.menu-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.9;
+}
+
+.menu-note {
+  margin-top: auto;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #b8c4d6;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+body:not(.locked) .workspace {
+  grid-column: 2;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body:not(.locked)[data-module="venta"] .workspace {
+  grid-column: 2;
+}
+
+body:not(.locked) .workspace-scroll {
+  display: block;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+body:not(.locked) .module-screen {
+  display: none !important;
+}
+
+body:not(.locked) .module-screen.is-active {
+  display: block !important;
+}
+
+body:not(.locked) .search-panel.module-screen.is-active {
+  display: flex !important;
+  flex-direction: column;
+  min-height: 0;
+}
+
+body:not(.locked) .sales-dashboard.module-screen,
+body:not(.locked) .product-dashboard.module-screen,
+body:not(.locked) .sale-panel.module-screen {
+  display: none !important;
+}
+
+body:not(.locked)[data-module="venta"] .sales-dashboard.module-screen.is-active,
+body:not(.locked)[data-module="venta"] .sale-panel.module-screen.is-active {
+  display: block !important;
+}
+
+body:not(.locked)[data-module="catalogo"] .product-dashboard.module-screen.is-active {
+  display: block !important;
+}
+
+body:not(.locked) .catalog-search {
+  position: relative;
+  z-index: 5;
+  min-height: 0;
+}
+
+body:not(.locked):not([data-module="catalogo"]):not([data-module="venta"]) > .layout .workspace > .catalog-search {
+  display: none !important;
+}
+
+body:not(.locked) .panel {
+  border-radius: 10px;
+}
+
+body:not(.locked) .table-wrap,
+body:not(.locked) .movements,
+body:not(.locked) .metric-list,
+body:not(.locked) .rank-list,
+body:not(.locked) .cart-items {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 960px) {
+  body:not(.locked) .topbar {
+    height: 72px !important;
+    min-height: 72px;
+    max-height: 72px;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .menu-toggle {
+    display: grid;
+  }
+
+  body:not(.locked) .layout.erp-shell,
+  body:not(.locked)[data-module="venta"] .layout.erp-shell {
+    grid-template-columns: 1fr;
+    height: calc(100dvh - 72px) !important;
+    padding: 10px;
+  }
+
+  body:not(.locked) .side-menu {
+    position: fixed;
+    inset: 72px auto 0 0;
+    z-index: 80;
+    width: min(84vw, 310px);
+    height: calc(100dvh - 72px);
+    border-radius: 0 14px 14px 0;
+    transform: translateX(-105%);
+    transition: transform 180ms ease;
+  }
+
+  body:not(.locked).menu-open .side-menu {
+    transform: translateX(0);
+  }
+
+  body:not(.locked) .workspace,
+  body:not(.locked)[data-module="venta"] .workspace {
+    grid-column: 1;
+  }
+
+  body:not(.locked) .workspace-scroll {
+    overflow-y: auto;
+  }
+
+  body:not(.locked) .sale-panel {
+    max-height: 40vh;
+  }
+
+  body:not(.locked) .catalog-search {
+    grid-template-columns: 1fr;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .stock-update-grid,
+  .cart-sale,
+  .dashboard-grid,
+  .kpi-grid,
+  .product-editor {
+    grid-template-columns: 1fr !important;
+  }
+}

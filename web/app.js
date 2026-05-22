@@ -73,10 +73,16 @@ const summary = document.querySelector("#summary");
 const movements = document.querySelector("#movements");
 
 document.body.classList.add("locked");
+const bootFallback = window.setTimeout(hideBootScreen, 3500);
 
 function hideBootScreen() {
+  window.clearTimeout(bootFallback);
   document.body.classList.remove("booting");
-  window.setTimeout(() => bootScreen?.remove(), 260);
+  window.setTimeout(() => {
+    if (bootScreen && bootScreen.parentNode) {
+      bootScreen.parentNode.removeChild(bootScreen);
+    }
+  }, 260);
 }
 
 function escapeHtml(value) {

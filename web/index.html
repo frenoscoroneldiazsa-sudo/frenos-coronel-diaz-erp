@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Frenos Coronel Diaz SA</title>
+    <title>Frenos Coronel Diaz S.A.</title>
     <style>
       html {
         min-height: 100%;
@@ -71,14 +71,14 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260522-1" />
   </head>
   <body class="booting">
     <div id="bootScreen" class="boot-screen" role="status" aria-live="polite">
       <div class="boot-card">
         <img class="boot-logo" src="/assets/logo-frenos-coronel-diaz.png" alt="Frenos Coronel Diaz S.A." />
         <div class="boot-spinner" aria-hidden="true"></div>
-        <p class="boot-text">Cargando sistema…</p>
+        <p class="boot-text">Cargando sistema&hellip;</p>
       </div>
     </div>
 
@@ -94,10 +94,10 @@
 
         <section class="home-hero">
           <div class="hero-copy">
-            <p class="eyebrow">Repuestos para frenos y embragues</p>
-            <h1>ERP automotriz Frenos Coronel Diaz SA</h1>
+            <p class="eyebrow">Repuestos de frenos</p>
+            <h1>Frenos Coronel Diaz S.A.</h1>
             <p>
-              Gestión profesional de stock, ventas y operación interna para una repuestera especializada en frenos y embragues.
+              Repuestos de frenos para atención comercial, stock y gestión interna.
             </p>
           </div>
           <form id="loginForm" class="login-card">
@@ -503,6 +503,15 @@
       </aside>
     </main>
 
-    <script src="/app.js"></script>
+    <script src="/app.js?v=20260522-1"></script>
+    <script>
+      window.setTimeout(function () {
+        document.body.classList.remove("booting");
+        var bootScreen = document.getElementById("bootScreen");
+        if (bootScreen && bootScreen.parentNode) {
+          bootScreen.parentNode.removeChild(bootScreen);
+        }
+      }, 3500);
+    </script>
   </body>
 </html>

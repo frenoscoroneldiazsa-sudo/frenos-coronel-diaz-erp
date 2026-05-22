@@ -4,9 +4,84 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Frenos Coronel Diaz SA</title>
+    <style>
+      html {
+        min-height: 100%;
+        background: #f5f7fb;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background: #f5f7fb;
+        color: #172033;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .boot-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background:
+          radial-gradient(circle at 18% 16%, rgba(203, 18, 38, 0.12), transparent 30%),
+          radial-gradient(circle at 86% 10%, rgba(30, 64, 175, 0.14), transparent 28%),
+          linear-gradient(180deg, #ffffff 0%, #eef3f8 100%);
+      }
+
+      .boot-card {
+        display: grid;
+        justify-items: center;
+        gap: 16px;
+        width: min(360px, 100%);
+        padding: 28px 24px;
+        border: 1px solid rgba(219, 226, 234, 0.95);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 22px 58px rgba(15, 23, 42, 0.14);
+        text-align: center;
+      }
+
+      .boot-logo {
+        width: min(260px, 76vw);
+        height: auto;
+      }
+
+      .boot-text {
+        margin: 0;
+        color: #172033;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .boot-spinner {
+        width: 34px;
+        height: 34px;
+        border: 3px solid #dbe2ea;
+        border-top-color: #0f766e;
+        border-radius: 50%;
+        animation: boot-spin 0.8s linear infinite;
+      }
+
+      @keyframes boot-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
     <link rel="stylesheet" href="/styles.css" />
   </head>
-  <body>
+  <body class="booting">
+    <div id="bootScreen" class="boot-screen" role="status" aria-live="polite">
+      <div class="boot-card">
+        <img class="boot-logo" src="/assets/logo-frenos-coronel-diaz.png" alt="Frenos Coronel Diaz S.A." />
+        <div class="boot-spinner" aria-hidden="true"></div>
+        <p class="boot-text">Cargando sistema…</p>
+      </div>
+    </div>
+
     <section id="loginScreen" class="login-screen">
       <div class="catalog-home">
         <header class="catalog-home-top">

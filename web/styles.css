@@ -44,6 +44,18 @@ body.locked {
   overflow: hidden;
 }
 
+.boot-screen {
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease;
+}
+
+body:not(.booting) .boot-screen {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 button,
 input,
 textarea {

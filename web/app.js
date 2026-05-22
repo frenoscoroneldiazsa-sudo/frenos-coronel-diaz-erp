@@ -5,6 +5,7 @@ const state = {
   cart: [],
 };
 
+const bootScreen = document.querySelector("#bootScreen");
 const loginScreen = document.querySelector("#loginScreen");
 const loginForm = document.querySelector("#loginForm");
 const userInput = document.querySelector("#userInput");
@@ -72,6 +73,11 @@ const summary = document.querySelector("#summary");
 const movements = document.querySelector("#movements");
 
 document.body.classList.add("locked");
+
+function hideBootScreen() {
+  document.body.classList.remove("booting");
+  window.setTimeout(() => bootScreen?.remove(), 260);
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -695,4 +701,15 @@ menuItems.forEach((item) => {
   item.addEventListener("click", () => setActiveMenu(item.dataset.view));
 });
 
-checkSession();
+async function startApp() {
+  try {
+    await checkSession();
+  } catch (error) {
+    console.error("No se pudo iniciar el sistema.", error);
+    lockApp();
+  } finally {
+    hideBootScreen();
+  }
+}
+
+startApp();

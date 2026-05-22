@@ -10,6 +10,7 @@ import os
 import re
 import secrets
 import sqlite3
+import unicodedata
 from datetime import datetime
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -109,6 +110,123 @@ def normalized_stock(row) -> dict:
     product["stock"] = unidad + deposito
     product["stock_total"] = unidad + deposito
     return product
+
+
+SEARCH_STOP_WORDS = {
+    "a",
+    "al",
+    "articulo",
+    "articulos",
+    "busca",
+    "buscame",
+    "buscar",
+    "busco",
+    "codigo",
+    "con",
+    "de",
+    "del",
+    "el",
+    "en",
+    "la",
+    "las",
+    "lo",
+    "los",
+    "mostrame",
+    "necesito",
+    "para",
+    "por",
+    "producto",
+    "productos",
+    "quiero",
+    "sin",
+    "tengo",
+    "un",
+    "una",
+}
+
+
+SEARCH_FIELDS = (
+    "codigo_item",
+    "codigo_barras",
+    "codigo_articulo",
+    "producto",
+    "marca",
+    "proveedor",
+    "departamento",
+    "descripcion",
+    "aplicacion",
+)
+
+
+def normalize_search_text(value: object) -> str:
+    text = unicodedata.normalize("NFKD", str(value or ""))
+    text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    text = re.sub(r"[^a-zA-Z0-9]+", " ", text)
+    return re.sub(r"\s+", " ", text).strip().lower()
+
+
+def search_terms(search: str) -> list[str]:
+    terms = []
+    for term in normalize_search_text(search).split():
+        if len(term) <= 1 or term in SEARCH_STOP_WORDS:
+            continue
+        terms.append(term)
+    return terms
+
+
+def term_variants(term: str) -> set[str]:
+    variants = {term}
+    if term.endswith("es") and len(term) > 4:
+        variants.add(term[:-2])
+    if term.endswith("s") and len(term) > 3:
+        variants.add(term[:-1])
+    return variants
+
+
+def product_search_score(product: dict, terms: list[str], raw_search: str) -> tuple[bool, int]:
+    if not terms:
+        return True, 0
+
+    normalized_fields = {field: normalize_search_text(product.get(field)) for field in SEARCH_FIELDS}
+    blob = " ".join(normalized_fields.values())
+    matched_terms = [term for term in terms if any(variant in blob for variant in term_variants(term))]
+    if len(matched_terms) != len(terms):
+        return False, 0
+
+    score = 0
+    raw_normalized = normalize_search_text(raw_search)
+    code_fields = ("codigo_item", "codigo_barras", "codigo_articulo")
+    for field in code_fields:
+        value = normalized_fields[field]
+        if raw_normalized and raw_normalized == value:
+            score += 260
+        elif raw_normalized and value.startswith(raw_normalized):
+            score += 180
+
+    weights = {
+        "codigo_item": 95,
+        "codigo_barras": 95,
+        "codigo_articulo": 90,
+        "producto": 70,
+        "marca": 55,
+        "proveedor": 50,
+        "departamento": 45,
+        "aplicacion": 42,
+        "descripcion": 28,
+    }
+    for term in terms:
+        variants = term_variants(term)
+        for field, value in normalized_fields.items():
+            if not value:
+                continue
+            if value in variants:
+                score += weights[field] + 45
+            elif any(value.startswith(variant) for variant in variants):
+                score += weights[field] + 24
+            elif any(variant in value for variant in variants):
+                score += weights[field]
+
+    return True, score
 
 
 def compact_key(value: object) -> str:
@@ -614,22 +732,6 @@ class AppHandler(SimpleHTTPRequestHandler):
             FROM productos
         """
         values: list[object] = []
-        if search:
-            terms = [term for term in search.split() if term]
-            clauses = []
-            for term in terms:
-                like = f"%{term}%"
-                clauses.append(
-                    """
-                    (LOWER(COALESCE(codigo_item, '')) LIKE ? OR LOWER(COALESCE(codigo_barras, '')) LIKE ?
-                     OR LOWER(COALESCE(codigo_articulo, '')) LIKE ? OR LOWER(COALESCE(producto, '')) LIKE ?
-                     OR LOWER(COALESCE(marca, '')) LIKE ? OR LOWER(COALESCE(proveedor, '')) LIKE ?
-                     OR LOWER(COALESCE(departamento, '')) LIKE ? OR LOWER(COALESCE(descripcion, '')) LIKE ?
-                     OR LOWER(COALESCE(aplicacion, '')) LIKE ?)
-                    """
-                )
-                values.extend([like.lower()] * 9)
-            sql += " WHERE " + " AND ".join(clauses)
         filters = []
         if proveedor:
             filters.append("proveedor = ?")
@@ -638,14 +740,32 @@ class AppHandler(SimpleHTTPRequestHandler):
             filters.append("departamento = ?")
             values.append(categoria)
         if filters:
-            sql += (" AND " if " WHERE " in sql else " WHERE ") + " AND ".join(filters)
-        sql += " ORDER BY stock DESC, codigo_item LIMIT ?"
-        values.append(limit)
+            sql += " WHERE " + " AND ".join(filters)
+        sql += " ORDER BY stock DESC, codigo_item"
+        if not search:
+            sql += " LIMIT ?"
+            values.append(limit)
 
         conn = connect()
         products = [normalized_stock(row) for row in execute(conn, sql, values).fetchall()]
         conn.close()
-        json_response(self, {"productos": products})
+
+        terms = search_terms(search)
+        if terms:
+            ranked = []
+            for product in products:
+                matched, score = product_search_score(product, terms, search)
+                if matched:
+                    product["relevancia"] = score
+                    ranked.append(product)
+            products = sorted(
+                ranked,
+                key=lambda item: (item.get("relevancia", 0), to_int(item.get("stock")), str(item.get("codigo_item") or "")),
+                reverse=True,
+            )
+
+        total = len(products)
+        json_response(self, {"productos": products[:limit], "total": total})
 
     def handle_product_update(self) -> None:
         data = self.read_json()

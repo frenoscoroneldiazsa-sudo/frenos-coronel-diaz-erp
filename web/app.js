@@ -14,6 +14,9 @@ const loginMessage = document.querySelector("#loginMessage");
 const userLabel = document.querySelector("#userLabel");
 const logoutButton = document.querySelector("#logoutButton");
 const menuToggle = document.querySelector("#menuToggle");
+const menuOverlay = document.querySelector("#menuOverlay");
+const sidebarCollapse = document.querySelector("#sidebarCollapse");
+const pageLoader = document.querySelector("#pageLoader");
 const sideMenu = document.querySelector("#sideMenu");
 const menuItems = document.querySelectorAll(".menu-item");
 const adminOnlyItems = document.querySelectorAll(".admin-only");
@@ -67,6 +70,12 @@ const refreshButton = document.querySelector("#refreshButton");
 const providerFilter = document.querySelector("#providerFilter");
 const categoryFilter = document.querySelector("#categoryFilter");
 const clearFiltersButton = document.querySelector("#clearFiltersButton");
+const searchStatus = document.querySelector("#searchStatus");
+const searchCounter = document.querySelector("#searchCounter");
+const assistantInput = document.querySelector("#assistantInput");
+const assistantButton = document.querySelector("#assistantButton");
+const assistantResponse = document.querySelector("#assistantResponse");
+const assistantResults = document.querySelector("#assistantResults");
 const selectedProduct = document.querySelector("#selectedProduct");
 const saleForm = document.querySelector("#saleForm");
 const quantityInput = document.querySelector("#quantityInput");
@@ -100,6 +109,60 @@ const excelPreview = document.querySelector("#excelPreview");
 
 document.body.classList.add("locked");
 const bootFallback = window.setTimeout(hideBootScreen, 3500);
+let loaderCount = 0;
+const SIDEBAR_COLLAPSED_KEY = "erp.sidebarCollapsed";
+
+function showPageLoader() {
+  loaderCount += 1;
+  pageLoader?.classList.add("is-visible");
+  pageLoader?.setAttribute("aria-hidden", "false");
+}
+
+function hidePageLoader() {
+  loaderCount = Math.max(0, loaderCount - 1);
+  if (loaderCount === 0) {
+    pageLoader?.classList.remove("is-visible");
+    pageLoader?.setAttribute("aria-hidden", "true");
+  }
+}
+
+async function withPageLoader(task) {
+  showPageLoader();
+  try {
+    return await task();
+  } finally {
+    hidePageLoader();
+  }
+}
+
+function closeMobileMenu() {
+  document.body.classList.remove("menu-open");
+  menuToggle?.setAttribute("aria-expanded", "false");
+  if (menuOverlay) {
+    menuOverlay.hidden = true;
+    menuOverlay.setAttribute("aria-hidden", "true");
+  }
+}
+
+function openMobileMenu() {
+  document.body.classList.add("menu-open");
+  menuToggle?.setAttribute("aria-expanded", "true");
+  if (menuOverlay) {
+    menuOverlay.hidden = false;
+    menuOverlay.setAttribute("aria-hidden", "false");
+  }
+}
+
+function applySidebarCollapsed(collapsed) {
+  document.body.classList.toggle("sidebar-collapsed", collapsed);
+  sidebarCollapse?.setAttribute("aria-label", collapsed ? "Expandir menú lateral" : "Colapsar menú lateral");
+  sidebarCollapse?.setAttribute("title", collapsed ? "Expandir menú" : "Colapsar menú");
+}
+
+function initSidebarCollapse() {
+  const saved = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+  applySidebarCollapsed(saved === "1");
+}
 
 function hideBootScreen() {
   window.clearTimeout(bootFallback);
@@ -117,6 +180,77 @@ function escapeHtml(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+function escapeRegex(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function normalizeSearchText(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function importantSearchTerms(value) {
+  const stopWords = new Set([
+    "a",
+    "al",
+    "articulo",
+    "articulos",
+    "busca",
+    "buscame",
+    "buscar",
+    "busco",
+    "codigo",
+    "con",
+    "de",
+    "del",
+    "el",
+    "en",
+    "la",
+    "las",
+    "lo",
+    "los",
+    "mostrame",
+    "necesito",
+    "para",
+    "por",
+    "producto",
+    "productos",
+    "quiero",
+    "sin",
+    "tengo",
+    "un",
+    "una",
+  ]);
+  return normalizeSearchText(value)
+    .split(" ")
+    .filter((term) => term.length > 1 && !stopWords.has(term));
+}
+
+function highlightText(value, query) {
+  const terms = importantSearchTerms(query);
+  let safe = escapeHtml(value);
+  terms.forEach((term) => {
+    safe = safe.replace(new RegExp(`(${escapeRegex(term)})`, "gi"), "<mark>$1</mark>");
+  });
+  return safe;
+}
+
+function setSearchStatus(text, type = "") {
+  if (!searchStatus) return;
+  searchStatus.textContent = text;
+  searchStatus.className = type ? `is-${type}` : "";
+}
+
+function setSearchCounter(count, total = count) {
+  if (!searchCounter) return;
+  const suffix = total > count ? ` de ${total}` : "";
+  searchCounter.textContent = `${count}${suffix} resultado${count === 1 ? "" : "s"}`;
 }
 
 function stockClass(stock) {
@@ -143,11 +277,28 @@ async function searchProducts() {
     categoria: categoryFilter.value,
     limit: "200",
   });
-  const response = await fetch(`/api/productos?${params.toString()}`);
-  if (!ensureAllowed(response)) return;
-  const data = await response.json();
-  state.products = data.productos || [];
-  renderProducts();
+  setSearchStatus("Buscando...", "loading");
+  try {
+    const response = await fetch(`/api/productos/buscar?${params.toString()}`);
+    if (!ensureAllowed(response)) return;
+    const data = await response.json();
+    state.products = data.productos || [];
+    renderProducts(query);
+    setSearchCounter(state.products.length, data.total ?? state.products.length);
+    if (state.products.length === 0) {
+      setSearchStatus("Sin resultados. Probá con otro código, marca o descripción.", "empty");
+    } else {
+      setSearchStatus("Resultados actualizados.", "ok");
+    }
+    return state.products;
+  } catch (error) {
+    console.error("Error al buscar productos", error);
+    state.products = [];
+    renderProducts(query);
+    setSearchCounter(0);
+    setSearchStatus("No se pudo completar la búsqueda.", "error");
+    return [];
+  }
 }
 
 async function loadFilters() {
@@ -172,11 +323,11 @@ function fillSelect(select, values, emptyLabel) {
   select.value = values.includes(current) ? current : "";
 }
 
-function renderProducts() {
+function renderProducts(query = searchInput.value.trim()) {
   if (state.products.length === 0) {
     productsBody.innerHTML = `
       <tr>
-        <td colspan="11" class="muted">No se encontraron productos.</td>
+        <td colspan="11" class="muted">Sin resultados para la búsqueda actual.</td>
       </tr>
     `;
     return;
@@ -187,13 +338,13 @@ function renderProducts() {
       const selected = state.selected?.id === product.id ? "selected" : "";
       return `
         <tr class="${selected}" data-id="${product.id}">
-          <td><span class="product-code">${escapeHtml(product.codigo_item)}</span></td>
-          <td>${escapeHtml(product.codigo_barras)}</td>
-          <td>${escapeHtml(product.codigo_articulo)}</td>
-          <td>${escapeHtml(product.producto)}</td>
-          <td>${escapeHtml(product.marca)}</td>
-          <td>${escapeHtml(product.proveedor)}</td>
-          <td>${escapeHtml(product.departamento)}</td>
+          <td><span class="product-code">${highlightText(product.codigo_item, query)}</span></td>
+          <td>${highlightText(product.codigo_barras, query)}</td>
+          <td>${highlightText(product.codigo_articulo, query)}</td>
+          <td>${highlightText(product.producto, query)}</td>
+          <td>${highlightText(product.marca, query)}</td>
+          <td>${highlightText(product.proveedor, query)}</td>
+          <td>${highlightText(product.departamento, query)}</td>
           <td class="${stockClass(product.stock_unidad)}">${escapeHtml(product.stock_unidad)}</td>
           <td class="${stockClass(product.stock_deposito)}">${escapeHtml(product.stock_deposito)}</td>
           <td class="${stockClass(product.stock)}">${escapeHtml(product.stock)}</td>
@@ -206,6 +357,72 @@ function renderProducts() {
       `;
     })
     .join("");
+}
+
+function assistantExplanation(product, terms) {
+  const fields = [
+    ["producto", "producto"],
+    ["marca", "marca"],
+    ["proveedor", "proveedor"],
+    ["departamento", "departamento"],
+    ["descripcion", "descripción"],
+    ["aplicacion", "aplicación"],
+  ];
+  const matched = [];
+  fields.forEach(([field, label]) => {
+    const value = normalizeSearchText(product[field]);
+    if (terms.some((term) => value.includes(term))) {
+      matched.push(label);
+    }
+  });
+  return matched.length > 0 ? `Coincide por ${matched.slice(0, 3).join(", ")}.` : "Coincidencia encontrada en el catálogo.";
+}
+
+function renderAssistantResults(products, terms) {
+  if (!assistantResults || !assistantResponse) return;
+  if (products.length === 0) {
+    assistantResponse.textContent = "No encontré productos con esa consulta. Probá con marca, modelo, código o tipo de repuesto.";
+    assistantResults.innerHTML = "";
+    return;
+  }
+
+  assistantResponse.textContent = `Encontré ${products.length} sugerencia${products.length === 1 ? "" : "s"} usando las palabras: ${terms.join(", ")}.`;
+  assistantResults.innerHTML = products
+    .slice(0, 6)
+    .map(
+      (product) => `
+        <article class="assistant-result" data-id="${product.id}">
+          <div>
+            <strong>${escapeHtml(product.producto || "Producto sin nombre")}</strong>
+            <span>${escapeHtml(product.marca || "Sin marca")} · ${escapeHtml(product.proveedor || "Sin proveedor")}</span>
+            <p>${escapeHtml(assistantExplanation(product, terms))} Stock disponible: <strong>${escapeHtml(product.stock)}</strong></p>
+          </div>
+          <div class="assistant-actions">
+            <button type="button" data-assistant-action="view">Ver producto</button>
+            <button type="button" data-assistant-action="sell">Agregar a venta</button>
+          </div>
+        </article>
+      `,
+    )
+    .join("");
+}
+
+async function runAssistantSearch() {
+  const text = assistantInput?.value.trim() || "";
+  const terms = importantSearchTerms(text);
+  if (!text || terms.length === 0) {
+    assistantResponse.textContent = "Escribí qué producto, código, marca o aplicación necesitás buscar.";
+    assistantResults.innerHTML = "";
+    return;
+  }
+
+  const query = terms.join(" ");
+  searchInput.value = query;
+  setActiveMenu("catalogo");
+  const products = await searchProducts();
+  const wantsNoStock = normalizeSearchText(text).includes("sin stock");
+  const suggestions = wantsNoStock ? products.filter((product) => Number(product.stock || 0) <= 0) : products;
+  renderAssistantResults(suggestions, terms);
 }
 
 function selectProduct(product) {
@@ -431,8 +648,7 @@ function ensureAllowed(response) {
 function lockApp() {
   state.user = null;
   document.body.classList.add("locked");
-  document.body.classList.remove("menu-open");
-  menuToggle?.setAttribute("aria-expanded", "false");
+  closeMobileMenu();
   userLabel.textContent = "Sin usuario";
   productsBody.innerHTML = "";
   movements.innerHTML = "";
@@ -442,6 +658,7 @@ function unlockApp(user) {
   state.user = user;
   document.body.classList.remove("locked");
   userLabel.textContent = `${user.nombre} (${user.rol})`;
+  initSidebarCollapse();
   updateMenuByRole();
   setActiveMenu("dashboard");
 }
@@ -454,8 +671,7 @@ function updateMenuByRole() {
 
 function setActiveMenu(view) {
   document.body.dataset.module = view;
-  document.body.classList.remove("menu-open");
-  menuToggle?.setAttribute("aria-expanded", "false");
+  closeMobileMenu();
   menuItems.forEach((item) => {
     item.classList.toggle("active", item.dataset.view === view);
   });
@@ -879,14 +1095,16 @@ async function logout() {
 }
 
 async function loadInitialData() {
-  await loadSummary();
-  await loadFilters();
-  await searchProducts();
-  await loadMovements();
-  await loadSalesSummary();
-  await loadDashboard();
-  await loadInventory();
-  renderCart();
+  await withPageLoader(async () => {
+    await loadSummary();
+    await loadFilters();
+    await searchProducts();
+    await loadMovements();
+    await loadSalesSummary();
+    await loadDashboard();
+    await loadInventory();
+    renderCart();
+  });
 }
 
 productsBody.addEventListener("click", (event) => {
@@ -913,6 +1131,7 @@ refreshButton.addEventListener("click", async () => {
 });
 searchInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
+    event.preventDefault();
     searchProducts();
   }
 });
@@ -922,15 +1141,37 @@ clearFiltersButton.addEventListener("click", () => {
   searchInput.value = "";
   providerFilter.value = "";
   categoryFilter.value = "";
+  if (assistantInput) assistantInput.value = "";
+  if (assistantResponse) assistantResponse.textContent = "El asistente usa el catálogo actual y no inventa productos.";
+  if (assistantResults) assistantResults.innerHTML = "";
   searchProducts();
+});
+assistantButton?.addEventListener("click", runAssistantSearch);
+assistantInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    runAssistantSearch();
+  }
+});
+assistantResults?.addEventListener("click", (event) => {
+  const card = event.target.closest(".assistant-result[data-id]");
+  if (!card) return;
+  const product = state.products.find((item) => item.id === Number(card.dataset.id));
+  if (!product) return;
+  selectProduct(product);
+  const action = event.target.closest("button")?.dataset.assistantAction;
+  if (action === "sell") {
+    addToCart(product);
+    setActiveMenu("venta");
+  }
 });
 inventoryProviderFilter.addEventListener("change", loadInventory);
 inventoryCategoryFilter.addEventListener("change", loadInventory);
 inventoryStatusFilter.addEventListener("change", loadInventory);
 refreshInventoryButton.addEventListener("click", loadInventory);
 stockAdjustForm.addEventListener("submit", saveStockAdjust);
-previewExcelButton.addEventListener("click", previewExcel);
-importExcelButton.addEventListener("click", importExcel);
+previewExcelButton.addEventListener("click", () => withPageLoader(previewExcel));
+importExcelButton.addEventListener("click", () => withPageLoader(importExcel));
 excelFileInput.addEventListener("change", () => {
   importExcelButton.disabled = true;
   excelPreview.innerHTML = "";
@@ -967,14 +1208,23 @@ loginForm.addEventListener("submit", login);
 logoutButton.addEventListener("click", logout);
 closeSalesDashboard?.addEventListener("click", () => salesDashboard.classList.remove("is-open"));
 closeProductDashboard?.addEventListener("click", () => productDashboard.classList.remove("is-open"));
-refreshDashboardButton.addEventListener("click", loadDashboard);
+refreshDashboardButton.addEventListener("click", () => withPageLoader(loadDashboard));
 productEditorForm.addEventListener("submit", saveProduct);
 menuItems.forEach((item) => {
   item.addEventListener("click", () => setActiveMenu(item.dataset.view));
 });
 menuToggle?.addEventListener("click", () => {
-  const isOpen = document.body.classList.toggle("menu-open");
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
+  if (document.body.classList.contains("menu-open")) {
+    closeMobileMenu();
+  } else {
+    openMobileMenu();
+  }
+});
+menuOverlay?.addEventListener("click", closeMobileMenu);
+sidebarCollapse?.addEventListener("click", () => {
+  const collapsed = !document.body.classList.contains("sidebar-collapsed");
+  applySidebarCollapsed(collapsed);
+  window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? "1" : "0");
 });
 
 async function startApp() {

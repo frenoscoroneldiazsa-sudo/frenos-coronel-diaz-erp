@@ -7,15 +7,15 @@
     <style>
       html {
         min-height: 100%;
-        background: #f5f7fb;
+        background: #0a0f1a;
       }
 
       body {
         min-height: 100vh;
         margin: 0;
-        background: #f5f7fb;
-        color: #172033;
-        font-family: Arial, Helvetica, sans-serif;
+        background: #0a0f1a;
+        color: #eef2f8;
+        font-family: "Segoe UI", system-ui, sans-serif;
       }
 
       .boot-screen {
@@ -26,9 +26,9 @@
         place-items: center;
         padding: 24px;
         background:
-          radial-gradient(circle at 18% 16%, rgba(203, 18, 38, 0.12), transparent 30%),
-          radial-gradient(circle at 86% 10%, rgba(30, 64, 175, 0.14), transparent 28%),
-          linear-gradient(180deg, #ffffff 0%, #eef3f8 100%);
+          radial-gradient(circle at 18% 16%, rgba(211, 47, 47, 0.14), transparent 30%),
+          radial-gradient(circle at 86% 10%, rgba(59, 130, 246, 0.16), transparent 28%),
+          linear-gradient(180deg, #0a0f1a 0%, #0f1628 100%);
       }
 
       .boot-card {
@@ -37,10 +37,10 @@
         gap: 16px;
         width: min(360px, 100%);
         padding: 28px 24px;
-        border: 1px solid rgba(219, 226, 234, 0.95);
+        border: 1px solid #2a3d5c;
         border-radius: 18px;
-        background: rgba(255, 255, 255, 0.92);
-        box-shadow: 0 22px 58px rgba(15, 23, 42, 0.14);
+        background: #141d2f;
+        box-shadow: 0 22px 58px rgba(0, 0, 0, 0.45);
         text-align: center;
       }
 
@@ -51,7 +51,7 @@
 
       .boot-text {
         margin: 0;
-        color: #172033;
+        color: #eef2f8;
         font-size: 15px;
         font-weight: 800;
       }
@@ -59,8 +59,8 @@
       .boot-spinner {
         width: 34px;
         height: 34px;
-        border: 3px solid #dbe2ea;
-        border-top-color: #0f766e;
+        border: 3px solid #2a3d5c;
+        border-top-color: #3b82f6;
         border-radius: 50%;
         animation: boot-spin 0.8s linear infinite;
       }
@@ -71,7 +71,8 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="/styles.css?v=20260522-4" />
+    <link rel="stylesheet" href="/styles.css?v=20260522-7" />
+    <link rel="stylesheet" href="/erp-theme.css?v=20260522-9" />
   </head>
   <body class="booting">
     <div id="bootScreen" class="boot-screen" role="status" aria-live="polite">
@@ -166,6 +167,15 @@
       </div>
     </header>
 
+    <div id="menuOverlay" class="menu-overlay" hidden aria-hidden="true"></div>
+
+    <div id="pageLoader" class="page-loader" aria-hidden="true" role="status">
+      <div class="page-loader-card">
+        <div class="page-loader-ring" aria-hidden="true"></div>
+        <span>Procesando&hellip;</span>
+      </div>
+    </div>
+
     <main class="layout erp-shell">
       <nav id="sideMenu" class="side-menu" aria-label="Menú principal">
         <div class="menu-brand">
@@ -174,12 +184,15 @@
             <strong>Frenos Coronel Diaz S.A.</strong>
             <span>Sistema interno</span>
           </div>
+          <button id="sidebarCollapse" class="sidebar-collapse" type="button" aria-label="Colapsar menú lateral" title="Colapsar menú">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+          </button>
         </div>
         <button class="menu-item active" type="button" data-view="dashboard">
           <span class="menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="8" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="15" width="7" height="6" rx="1.5"></rect></svg>
           </span>
-          <span>Dashboard</span>
+          <span>Tablero</span>
         </button>
         <button class="menu-item" type="button" data-view="catalogo">
           <span class="menu-icon" aria-hidden="true">
@@ -223,7 +236,7 @@
           </span>
           <span>Ajustes</span>
         </button>
-        <div class="menu-note" id="menuNote">Módulo actual: Dashboard.</div>
+        <div class="menu-note" id="menuNote">Módulo actual: tablero ejecutivo y control general.</div>
       </nav>
 
       <section class="workspace">
@@ -233,6 +246,10 @@
             <div class="search-row">
               <input id="searchInput" type="search" placeholder="Codigo, codigo de barras, marca, descripcion, aplicacion..." autofocus />
               <button id="searchButton" type="button">Buscar</button>
+            </div>
+            <div class="search-feedback" aria-live="polite">
+              <span id="searchStatus">Listo para buscar.</span>
+              <strong id="searchCounter">0 resultados</strong>
             </div>
           </div>
           <div class="filter-box">
@@ -269,19 +286,33 @@
               </article>
               <article>
                 <strong>Control</strong>
-                <span>Revisá indicadores y estado general desde Dashboard.</span>
+                <span>Revisá indicadores y estado general desde el tablero.</span>
               </article>
             </div>
           </section>
 
-          <section class="panel search-panel module-screen" data-module="catalogo">
+          <section class="panel search-panel module-screen sales-product-picker" data-module="catalogo">
             <div class="section-head">
               <div>
                 <h2>Catálogo</h2>
                 <p>Búsqueda rápida por código, producto, marca, proveedor, departamento y aplicación.</p>
+                <p class="venta-picker-hint">Seleccioná un producto en la tabla y usá <strong>Agregar al carrito</strong> o el botón <strong>Vender</strong>.</p>
               </div>
               <button id="refreshButton" type="button">Actualizar</button>
             </div>
+
+            <section class="catalog-assistant" aria-label="Asistente de búsqueda">
+              <div>
+                <h3>Asistente de búsqueda</h3>
+                <p>Escribí una consulta simple, por ejemplo: busco pastillas corsa, flexible gol o código 4542.</p>
+              </div>
+              <div class="assistant-row">
+                <input id="assistantInput" type="search" placeholder="Escribí lo que necesitás..." />
+                <button id="assistantButton" type="button">Buscar con asistente</button>
+              </div>
+              <div id="assistantResponse" class="assistant-response">El asistente usa el catálogo actual y no inventa productos.</div>
+              <div id="assistantResults" class="assistant-results"></div>
+            </section>
 
             <div class="table-wrap">
               <table>
@@ -309,34 +340,34 @@
             <div class="dashboard-hero">
               <div>
                 <p class="eyebrow">Control empresarial</p>
-                <h2>Dashboard ejecutivo</h2>
+                <h2>Tablero ejecutivo</h2>
                 <span>Estado operativo de ventas, stock, categorías y productos críticos.</span>
               </div>
-              <button id="refreshDashboardButton" type="button">Actualizar</button>
+              <button id="refreshDashboardButton" type="button">Actualizar datos</button>
             </div>
             <div class="kpi-grid">
-              <article class="kpi-card">
-                <span>Productos</span>
+              <article class="kpi-card kpi-card--products">
+                <span class="kpi-label">Productos</span>
                 <strong id="kpiProducts">0</strong>
               </article>
-              <article class="kpi-card">
-                <span>Unidades disponibles</span>
+              <article class="kpi-card kpi-card--units">
+                <span class="kpi-label">Unidades disponibles</span>
                 <strong id="kpiUnits">0</strong>
               </article>
-              <article class="kpi-card warning">
-                <span>Productos sin stock</span>
+              <article class="kpi-card warning kpi-card--nostock">
+                <span class="kpi-label">Productos sin stock</span>
                 <strong id="kpiNoStock">0</strong>
               </article>
-              <article class="kpi-card danger">
-                <span>Stock crítico</span>
+              <article class="kpi-card danger kpi-card--critical">
+                <span class="kpi-label">Stock crítico</span>
                 <strong id="kpiCritical">0</strong>
               </article>
-              <article class="kpi-card">
-                <span>Ventas registradas</span>
+              <article class="kpi-card kpi-card--sales">
+                <span class="kpi-label">Ventas registradas</span>
                 <strong id="kpiSales">0</strong>
               </article>
-              <article class="kpi-card">
-                <span>Unidades vendidas</span>
+              <article class="kpi-card kpi-card--sold">
+                <span class="kpi-label">Unidades vendidas</span>
                 <strong id="kpiSoldUnits">0</strong>
               </article>
             </div>
@@ -356,27 +387,38 @@
             </div>
           </section>
 
-          <section class="panel sales-dashboard module-screen" id="salesDashboard" data-module="venta">
-        <div class="section-head">
+          <section class="panel sales-dashboard module-screen sales-module" id="salesDashboard" data-module="venta">
+        <div class="section-head sales-module-head">
           <div>
+            <p class="eyebrow">Punto de venta</p>
             <h2>Ventas</h2>
-            <p>Venta con carrito, salida de productos, ranking y últimas operaciones.</p>
+            <p>Carrito, salida rápida, ranking y últimas operaciones.</p>
           </div>
         </div>
-        <div class="cart-sale">
+        <div class="sales-kpis sales-kpis--premium">
+          <article class="kpi-card kpi-card--sales">
+            <span class="kpi-label">Operaciones</span>
+            <strong id="salesOperations">0</strong>
+          </article>
+          <article class="kpi-card kpi-card--sold">
+            <span class="kpi-label">Unidades vendidas</span>
+            <strong id="salesUnits">0</strong>
+          </article>
+        </div>
+        <div class="cart-sale sales-cart-zone">
           <section class="cart-box">
             <div class="cart-head">
               <div>
                 <h3>Carrito de venta</h3>
                 <span id="cartSummary">0 productos seleccionados</span>
               </div>
-              <button id="addSelectedToCart" type="button">Agregar producto seleccionado</button>
+              <button id="addSelectedToCart" class="sales-btn-compact" type="button">+ Agregar seleccionado</button>
             </div>
             <div id="cartItems" class="cart-items">
               <div class="empty-state">Seleccioná productos del catálogo y agregalos al carrito.</div>
             </div>
           </section>
-          <form id="cartSaleForm" class="cart-form">
+          <form id="cartSaleForm" class="cart-form sales-checkout-form">
             <label>
               Cliente
               <input id="cartCustomer" type="text" placeholder="Cliente opcional" />
@@ -386,23 +428,13 @@
               <textarea id="cartNote" rows="2" placeholder="Observación opcional"></textarea>
             </label>
             <div class="cart-actions">
-              <button type="submit">Confirmar venta</button>
-              <button id="clearCartButton" class="secondary-button" type="button">Vaciar</button>
+              <button type="submit" class="sales-btn-confirm">Confirmar venta</button>
+              <button id="clearCartButton" class="secondary-button sales-btn-compact" type="button">Vaciar</button>
             </div>
             <p id="cartMessage" class="message"></p>
           </form>
         </div>
-        <div class="sales-kpis">
-          <div>
-            <span>Operaciones registradas</span>
-            <strong id="salesOperations">0</strong>
-          </div>
-          <div>
-            <span>Unidades con salida</span>
-            <strong id="salesUnits">0</strong>
-          </div>
-        </div>
-        <div class="sales-grid">
+        <div class="sales-grid sales-rankings">
           <section>
             <h3>Productos con mayor salida</h3>
             <div id="topSalesList" class="rank-list"></div>
@@ -599,8 +631,16 @@
         </div>
       </section>
 
-      <aside class="panel sale-panel module-screen" data-module="venta">
-        <h2>Panel de venta</h2>
+      <div class="sale-modal-backdrop" aria-hidden="true"></div>
+      <aside class="panel sale-panel module-screen sale-drawer" data-module="venta">
+        <div class="sale-drawer-handle" aria-hidden="true"></div>
+        <header class="sale-drawer-head">
+          <div>
+            <p class="eyebrow">Salida rápida</p>
+            <h2>Panel de venta</h2>
+          </div>
+        </header>
+        <div class="sale-drawer-body">
         <div id="selectedProduct" class="empty-state">Seleccioná un producto para operar.</div>
 
         <form id="saleForm" class="sale-form">
@@ -615,11 +655,11 @@
           <button type="submit">Registrar salida</button>
           <p id="saleMessage" class="message"></p>
         </form>
-
+        </div>
       </aside>
     </main>
 
-    <script src="/app.js?v=20260522-4"></script>
+    <script src="/app.js?v=20260522-7"></script>
     <script>
       window.setTimeout(function () {
         document.body.classList.remove("booting");

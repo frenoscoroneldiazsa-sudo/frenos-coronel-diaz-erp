@@ -1,6 +1,7 @@
 const state = {
   selected: null,
   products: [],
+  salesProducts: [],
   user: null,
   cart: [],
 };
@@ -77,6 +78,12 @@ const assistantInput = document.querySelector("#assistantInput");
 const assistantButton = document.querySelector("#assistantButton");
 const assistantResponse = document.querySelector("#assistantResponse");
 const assistantResults = document.querySelector("#assistantResults");
+const salesProductsBody = document.querySelector("#salesProductsBody");
+const salesSearchInput = document.querySelector("#salesSearchInput");
+const salesSearchButton = document.querySelector("#salesSearchButton");
+const salesClearButton = document.querySelector("#salesClearButton");
+const salesSearchStatus = document.querySelector("#salesSearchStatus");
+const salesSearchCounter = document.querySelector("#salesSearchCounter");
 const selectedProduct = document.querySelector("#selectedProduct");
 const saleForm = document.querySelector("#saleForm");
 const quantityInput = document.querySelector("#quantityInput");
@@ -254,6 +261,18 @@ function setSearchCounter(count, total = count) {
   searchCounter.textContent = `${count}${suffix} resultado${count === 1 ? "" : "s"}`;
 }
 
+function setSalesSearchStatus(text, type = "") {
+  if (!salesSearchStatus) return;
+  salesSearchStatus.textContent = text;
+  salesSearchStatus.className = type ? `is-${type}` : "";
+}
+
+function setSalesSearchCounter(count, total = count) {
+  if (!salesSearchCounter) return;
+  const suffix = total > count ? ` de ${total}` : "";
+  salesSearchCounter.textContent = `${count}${suffix} resultado${count === 1 ? "" : "s"}`;
+}
+
 function stockClass(stock) {
   return Number(stock) <= 0 ? "stock low" : "stock";
 }
@@ -298,6 +317,35 @@ async function searchProducts() {
     renderProducts(query);
     setSearchCounter(0);
     setSearchStatus("No se pudo completar la búsqueda.", "error");
+    return [];
+  }
+}
+
+async function searchSalesProducts() {
+  const query = salesSearchInput?.value.trim() || "";
+  const params = new URLSearchParams({
+    q: query,
+    limit: "120",
+  });
+  setSalesSearchStatus("Buscando...", "loading");
+  try {
+    const response = await fetch(`/api/productos/buscar?${params.toString()}`);
+    if (!ensureAllowed(response)) return [];
+    const data = await response.json();
+    state.salesProducts = data.productos || [];
+    renderSalesProducts(query);
+    setSalesSearchCounter(state.salesProducts.length, data.total ?? state.salesProducts.length);
+    setSalesSearchStatus(
+      state.salesProducts.length === 0 ? "Sin resultados para vender." : "Resultados de venta actualizados.",
+      state.salesProducts.length === 0 ? "empty" : "ok",
+    );
+    return state.salesProducts;
+  } catch (error) {
+    console.error("Error al buscar productos para venta", error);
+    state.salesProducts = [];
+    renderSalesProducts(query);
+    setSalesSearchCounter(0);
+    setSalesSearchStatus("No se pudo completar la búsqueda de venta.", "error");
     return [];
   }
 }
@@ -351,12 +399,51 @@ function renderProducts(query = searchInput.value.trim()) {
           <td class="${stockClass(product.stock)}">${escapeHtml(product.stock)}</td>
           <td class="row-actions">
             <button type="button" data-action="detail">Ver</button>
-            <button type="button" data-action="sell">Vender</button>
+            <button type="button" data-action="sell">Agregar a venta</button>
             <button type="button" data-action="stock">Stock</button>
           </td>
         </tr>
       `;
     })
+    .join("");
+}
+
+function productRow(product, query, actions = "catalog") {
+  const selected = state.selected?.id === product.id ? "selected" : "";
+  const sellLabel = actions === "sales" ? "Agregar" : "Agregar a venta";
+  return `
+    <tr class="${selected}" data-id="${product.id}">
+      <td><span class="product-code">${highlightText(product.codigo_item, query)}</span></td>
+      <td>${highlightText(product.codigo_barras, query)}</td>
+      <td>${highlightText(product.codigo_articulo, query)}</td>
+      <td>${highlightText(product.producto, query)}</td>
+      <td>${highlightText(product.marca, query)}</td>
+      <td>${highlightText(product.proveedor, query)}</td>
+      <td>${highlightText(product.departamento, query)}</td>
+      <td class="${stockClass(product.stock_unidad)}">${escapeHtml(product.stock_unidad)}</td>
+      <td class="${stockClass(product.stock_deposito)}">${escapeHtml(product.stock_deposito)}</td>
+      <td class="${stockClass(product.stock)}">${escapeHtml(product.stock)}</td>
+      <td class="row-actions">
+        <button type="button" data-action="detail">Ver</button>
+        <button type="button" data-action="sell">${sellLabel}</button>
+        <button type="button" data-action="stock">Stock</button>
+      </td>
+    </tr>
+  `;
+}
+
+function renderSalesProducts(query = salesSearchInput?.value.trim() || "") {
+  if (!salesProductsBody) return;
+  if (state.salesProducts.length === 0) {
+    salesProductsBody.innerHTML = `
+      <tr>
+        <td colspan="11" class="muted">Sin resultados para la venta actual.</td>
+      </tr>
+    `;
+    return;
+  }
+  salesProductsBody.innerHTML = state.salesProducts
+    .map((product) => productRow(product, query, "sales"))
     .join("");
 }
 
@@ -445,6 +532,7 @@ function selectProduct(product) {
   stockUnitInput.value = Number(product.stock_unidad || 0);
   stockDepositInput.value = Number(product.stock_deposito || 0);
   renderProducts();
+  renderSalesProducts();
   fillProductEditor(product);
   if (state.user?.rol === "administrador") {
     loadMovements(product.id);
@@ -505,6 +593,7 @@ async function registerSale(event) {
   state.selected.stock_deposito = data.stock_deposito;
   await loadSummary();
   await searchProducts();
+  await searchSalesProducts();
   await loadInventory();
   const fresh = state.products.find((product) => product.id === state.selected.id);
   if (fresh) {
@@ -536,7 +625,7 @@ function addToCart(product) {
 function renderCart() {
   const totalItems = state.cart.length;
   const totalUnits = state.cart.reduce((sum, item) => sum + Number(item.cantidad), 0);
-  cartSummary.textContent = `${totalItems} productos | ${totalUnits} unidades`;
+  cartSummary.textContent = `🛒 Carrito (${totalItems}) | ${totalUnits} unidades`;
 
   if (state.cart.length === 0) {
     cartItems.innerHTML = `<div class="empty-state">Seleccioná productos del catálogo y agregalos al carrito.</div>`;
@@ -596,6 +685,7 @@ async function confirmCartSale(event) {
   renderCart();
   await loadSummary();
   await searchProducts();
+  await searchSalesProducts();
   await loadSalesSummary();
   await loadDashboard();
   await loadInventory();
@@ -677,10 +767,7 @@ function setActiveMenu(view) {
     item.classList.toggle("active", item.dataset.view === view);
   });
   moduleScreens.forEach((screen) => {
-    const extraViews = (screen.dataset.extraView || "").split(/\s+/).filter(Boolean);
-    const belongsToView = screen.dataset.module === view || extraViews.includes(view);
-    const isSecondarySalesPanel = view === "venta" && screen.id === "salesDashboard";
-    const isVisible = belongsToView && !isSecondarySalesPanel;
+    const isVisible = screen.dataset.module === view;
     screen.classList.toggle("is-active", isVisible);
     screen.hidden = !isVisible;
     screen.setAttribute("aria-hidden", String(!isVisible));
@@ -701,7 +788,7 @@ function setActiveMenu(view) {
   if (view === "dashboard") {
     loadDashboard();
   }
-  if (view === "catalogo" || view === "venta") {
+  if (view === "catalogo") {
     if (searchLabel) {
       searchLabel.textContent = view === "venta" ? "Buscar producto para vender" : "Buscar en todo el catálogo";
     }
@@ -712,6 +799,9 @@ function setActiveMenu(view) {
           : "Código, código de barras, marca, descripción, aplicación...";
     }
     searchInput.focus();
+  }
+  if (view === "venta") {
+    salesSearchInput?.focus();
   }
   if (view === "inventario") {
     loadInventory();
@@ -808,6 +898,7 @@ async function saveStockAdjust(event) {
   stockAdjustMessage.className = "message ok";
   await loadSummary();
   await searchProducts();
+  await searchSalesProducts();
   await loadInventory();
   await loadMovements(state.selected.id);
 }
@@ -908,6 +999,7 @@ async function importExcel() {
   excelMessage.className = "message ok";
   await loadFilters();
   await searchProducts();
+  await searchSalesProducts();
   await loadInventory();
   await loadMovements();
 }
@@ -1025,6 +1117,7 @@ async function saveProduct(event) {
   productEditorMessage.className = "message ok";
   await loadFilters();
   await searchProducts();
+  await searchSalesProducts();
   const fresh = state.products.find((product) => product.id === state.selected.id);
   if (fresh) selectProduct(fresh);
 }
@@ -1115,6 +1208,7 @@ async function loadInitialData() {
     await loadSummary();
     await loadFilters();
     await searchProducts();
+    await searchSalesProducts();
     await loadMovements();
     await loadSalesSummary();
     await loadDashboard();
@@ -1138,11 +1232,40 @@ productsBody.addEventListener("click", (event) => {
   }
 });
 
+salesProductsBody?.addEventListener("click", (event) => {
+  const row = event.target.closest("tr[data-id]");
+  if (!row) return;
+  const product = state.salesProducts.find((item) => item.id === Number(row.dataset.id));
+  if (!product) return;
+  selectProduct(product);
+  const action = event.target.closest("button")?.dataset.action;
+  if (action === "sell") {
+    addToCart(product);
+  } else if (action === "stock") {
+    setActiveMenu("actualizar-stock");
+  }
+});
+
 searchButton.addEventListener("click", searchProducts);
+salesSearchButton?.addEventListener("click", searchSalesProducts);
+salesSearchInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    searchSalesProducts();
+  }
+});
+salesClearButton?.addEventListener("click", () => {
+  salesSearchInput.value = "";
+  state.salesProducts = [];
+  renderSalesProducts();
+  setSalesSearchCounter(0);
+  setSalesSearchStatus("Listo para vender.");
+});
 refreshButton.addEventListener("click", async () => {
   await loadSummary();
   await loadFilters();
   await searchProducts();
+  await searchSalesProducts();
   await loadMovements(state.selected?.id ?? 0);
 });
 searchInput.addEventListener("keydown", (event) => {

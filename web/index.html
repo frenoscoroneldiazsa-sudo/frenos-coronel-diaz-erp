@@ -72,7 +72,7 @@
       }
     </style>
     <link rel="stylesheet" href="/styles.css?v=20260522-7" />
-    <link rel="stylesheet" href="/erp-theme.css?v=20260522-14" />
+    <link rel="stylesheet" href="/erp-theme.css?v=20260522-15" />
   </head>
   <body class="booting">
     <div id="bootScreen" class="boot-screen" role="status" aria-live="polite">
@@ -240,7 +240,7 @@
       </nav>
 
       <section class="workspace">
-        <section class="catalog-search">
+        <section class="catalog-search catalog-search-toolbar">
           <div class="global-search">
         <label for="searchInput">Buscar en todo el catálogo</label>
             <div class="search-row">
@@ -291,7 +291,7 @@
             </div>
           </section>
 
-          <section class="panel search-panel module-screen sales-product-picker" data-module="catalogo" data-extra-view="venta" hidden aria-hidden="true">
+          <section class="panel search-panel module-screen sales-product-picker" data-module="catalogo" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Catálogo</h2>
@@ -332,6 +332,50 @@
                   </tr>
                 </thead>
                 <tbody id="productsBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel sales-pos-panel module-screen" id="salesPosPanel" data-module="venta" hidden aria-hidden="true">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Punto de venta</p>
+                <h2>Ventas</h2>
+                <p>Buscador rápido para caja. Los resultados de venta no se mezclan con Catálogo.</p>
+              </div>
+            </div>
+            <section class="sales-search-box">
+              <div class="global-search">
+                <label for="salesSearchInput">Buscar producto para vender</label>
+                <div class="search-row">
+                  <input id="salesSearchInput" type="search" placeholder="Código, código de barras, producto, marca o vehículo..." />
+                  <button id="salesSearchButton" type="button">Buscar</button>
+                </div>
+                <div class="search-feedback" aria-live="polite">
+                  <span id="salesSearchStatus">Listo para vender.</span>
+                  <strong id="salesSearchCounter">0 resultados</strong>
+                </div>
+              </div>
+              <button id="salesClearButton" class="secondary-button" type="button">Limpiar</button>
+            </section>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Código Item</th>
+                    <th>Código de Barras</th>
+                    <th>CodArticulo</th>
+                    <th>Producto</th>
+                    <th>Marca</th>
+                    <th>Proveedor</th>
+                    <th>Departamento</th>
+                    <th>Mostrador</th>
+                    <th>Depósito</th>
+                    <th>Total</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="salesProductsBody"></tbody>
               </table>
             </div>
           </section>
@@ -660,7 +704,7 @@
       </aside>
     </main>
 
-    <script src="/app.js?v=20260522-10"></script>
+    <script src="/app.js?v=20260522-11"></script>
     <script>
       window.setTimeout(function () {
         document.body.classList.remove("booting");

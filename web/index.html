@@ -268,7 +268,7 @@
         </section>
 
         <div class="workspace-scroll">
-          <section class="panel home-module module-screen" data-module="inicio">
+          <section class="panel home-module module-screen" data-module="inicio" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Inicio</h2>
@@ -291,7 +291,7 @@
             </div>
           </section>
 
-          <section class="panel search-panel module-screen sales-product-picker" data-module="catalogo">
+          <section class="panel search-panel module-screen sales-product-picker" data-module="catalogo" data-extra-view="venta" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Catálogo</h2>
@@ -387,7 +387,7 @@
             </div>
           </section>
 
-          <section class="panel sales-dashboard module-screen sales-module" id="salesDashboard" data-module="venta">
+          <section class="panel sales-dashboard module-screen sales-module" id="salesDashboard" data-module="venta" hidden aria-hidden="true">
         <div class="section-head sales-module-head">
           <div>
             <p class="eyebrow">Punto de venta</p>
@@ -417,7 +417,7 @@
         </div>
           </section>
 
-          <section class="panel product-dashboard module-screen" id="productDashboard" data-module="catalogo">
+          <section class="panel product-dashboard module-screen" id="productDashboard" data-module="catalogo" hidden aria-hidden="true">
         <div class="section-head">
           <div>
             <h2>Productos</h2>
@@ -477,7 +477,7 @@
         </form>
           </section>
 
-          <section class="panel placeholder-module module-screen" data-module="usuarios">
+          <section class="panel placeholder-module module-screen" data-module="usuarios" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Usuarios</h2>
@@ -487,7 +487,7 @@
             <div class="empty-state">Módulo reservado para gestión de usuarios.</div>
           </section>
 
-          <section class="panel inventory-module module-screen" data-module="inventario">
+          <section class="panel inventory-module module-screen" data-module="inventario" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Inventario</h2>
@@ -533,7 +533,7 @@
             </div>
           </section>
 
-          <section class="panel stock-update-module module-screen" data-module="actualizar-stock">
+          <section class="panel stock-update-module module-screen" data-module="actualizar-stock" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Actualizar stock</h2>
@@ -579,7 +579,7 @@
             </div>
           </section>
 
-          <section class="panel placeholder-module module-screen" data-module="ajustes">
+          <section class="panel placeholder-module module-screen" data-module="ajustes" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Ajustes</h2>
@@ -589,7 +589,7 @@
             <div class="empty-state">Módulo reservado para parámetros generales.</div>
           </section>
 
-          <section class="panel movements-module module-screen" data-module="movimientos">
+          <section class="panel movements-module module-screen" data-module="movimientos" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Movimientos</h2>
@@ -603,7 +603,7 @@
       </section>
 
       <div class="sale-modal-backdrop" aria-hidden="true"></div>
-      <aside class="panel sale-panel module-screen sale-drawer" data-module="venta">
+      <aside class="panel sale-panel module-screen sale-drawer" data-module="venta" hidden aria-hidden="true">
         <div class="sale-drawer-handle" aria-hidden="true"></div>
         <header class="sale-drawer-head">
           <div>
@@ -660,7 +660,7 @@
       </aside>
     </main>
 
-    <script src="/app.js?v=20260522-8"></script>
+    <script src="/app.js?v=20260522-10"></script>
     <script>
       window.setTimeout(function () {
         document.body.classList.remove("booting");

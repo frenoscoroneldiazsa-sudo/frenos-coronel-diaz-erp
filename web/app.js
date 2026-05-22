@@ -677,7 +677,13 @@ function setActiveMenu(view) {
     item.classList.toggle("active", item.dataset.view === view);
   });
   moduleScreens.forEach((screen) => {
-    screen.classList.toggle("is-active", screen.dataset.module === view);
+    const extraViews = (screen.dataset.extraView || "").split(/\s+/).filter(Boolean);
+    const belongsToView = screen.dataset.module === view || extraViews.includes(view);
+    const isSecondarySalesPanel = view === "venta" && screen.id === "salesDashboard";
+    const isVisible = belongsToView && !isSecondarySalesPanel;
+    screen.classList.toggle("is-active", isVisible);
+    screen.hidden = !isVisible;
+    screen.setAttribute("aria-hidden", String(!isVisible));
   });
 
   const notes = {

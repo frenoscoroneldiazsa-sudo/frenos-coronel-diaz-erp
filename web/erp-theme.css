@@ -2621,3 +2621,34 @@ body:not(.locked)[data-module="catalogo"] .product-editor .editor-actions {
     transform: translateX(0) !important;
   }
 }
+
+/* Navegacion ERP: una pantalla activa real por modulo */
+body:not(.locked) .module-screen[hidden],
+body:not(.locked) .module-screen[aria-hidden="true"],
+body:not(.locked) .module-screen:not(.is-active) {
+  display: none !important;
+}
+
+body:not(.locked) .module-screen.is-active {
+  display: block !important;
+}
+
+body:not(.locked) .search-panel.module-screen.is-active,
+body:not(.locked)[data-module="catalogo"] .product-dashboard.module-screen.is-active,
+body:not(.locked)[data-module="venta"] .sale-panel.module-screen.is-active {
+  display: flex !important;
+}
+
+body:not(.locked)[data-module="venta"] #salesDashboard,
+body:not(.locked)[data-module="venta"] #salesDashboard.is-active {
+  display: none !important;
+}
+
+body:not(.locked):not([data-module="catalogo"]):not([data-module="venta"]) > .layout .workspace > .catalog-search {
+  display: none !important;
+}
+
+body:not(.locked)[data-module="catalogo"] > .layout .workspace > .catalog-search,
+body:not(.locked)[data-module="venta"] > .layout .workspace > .catalog-search {
+  display: grid !important;
+}

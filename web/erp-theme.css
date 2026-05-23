@@ -2749,3 +2749,41 @@ body:not(.locked) .module-screen.is-active:not([hidden]) {
 body:not(.locked)[data-module="catalogo"] .catalog-search-toolbar.module-screen.is-active:not([hidden]) {
   display: grid !important;
 }
+
+/* Separacion obligatoria de modulos ERP: una sola seccion activa visible. */
+body:not(.locked) .section {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body:not(.locked) .section.active:not([hidden]),
+body:not(.locked) .section.is-active:not([hidden]) {
+  display: block !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+body:not(.locked) .section.search-panel.active:not([hidden]),
+body:not(.locked) .section.search-panel.is-active:not([hidden]),
+body:not(.locked) .section.sales-pos-panel.active:not([hidden]),
+body:not(.locked) .section.sales-pos-panel.is-active:not([hidden]),
+body:not(.locked) .section.sale-panel.active:not([hidden]),
+body:not(.locked) .section.sale-panel.is-active:not([hidden]),
+body:not(.locked) .section.product-dashboard.active:not([hidden]),
+body:not(.locked) .section.product-dashboard.is-active:not([hidden]) {
+  display: flex !important;
+}
+
+body:not(.locked) .section.catalog-search-toolbar.active:not([hidden]),
+body:not(.locked) .section.catalog-search-toolbar.is-active:not([hidden]) {
+  display: grid !important;
+}
+
+body:not(.locked) .section[hidden],
+body:not(.locked) .section[aria-hidden="true"],
+body:not(.locked) .section:not(.active):not(.is-active) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

@@ -21,7 +21,7 @@ const pageLoader = document.querySelector("#pageLoader");
 const sideMenu = document.querySelector("#sideMenu");
 const menuItems = document.querySelectorAll(".menu-item");
 const adminOnlyItems = document.querySelectorAll(".admin-only");
-const moduleScreens = document.querySelectorAll(".module-screen");
+const moduleScreens = document.querySelectorAll(".section, .module-screen");
 const menuNote = document.querySelector("#menuNote");
 const executiveDashboard = document.querySelector("#executiveDashboard");
 const refreshDashboardButton = document.querySelector("#refreshDashboardButton");
@@ -764,11 +764,16 @@ function setActiveMenu(view) {
   document.body.dataset.module = view;
   closeMobileMenu();
   menuItems.forEach((item) => {
-    item.classList.toggle("active", item.dataset.view === view);
+    const itemSection = item.dataset.section || item.dataset.view;
+    item.classList.toggle("active", itemSection === view);
   });
   moduleScreens.forEach((screen) => {
-    const isVisible = screen.dataset.module === view;
+    const screenSection = screen.dataset.section || screen.dataset.module;
+    const isVisible = screenSection === view;
+    screen.classList.add("section");
+    screen.dataset.section = screenSection || "";
     screen.classList.toggle("is-active", isVisible);
+    screen.classList.toggle("active", isVisible);
     screen.hidden = !isVisible;
     screen.style.display = isVisible ? "" : "none";
     screen.setAttribute("aria-hidden", String(!isVisible));
@@ -1348,7 +1353,7 @@ closeProductDashboard?.addEventListener("click", () => productDashboard.classLis
 refreshDashboardButton.addEventListener("click", () => withPageLoader(loadDashboard));
 productEditorForm.addEventListener("submit", saveProduct);
 menuItems.forEach((item) => {
-  item.addEventListener("click", () => setActiveMenu(item.dataset.view));
+  item.addEventListener("click", () => setActiveMenu(item.dataset.section || item.dataset.view));
 });
 menuToggle?.addEventListener("click", () => {
   if (document.body.classList.contains("menu-open")) {

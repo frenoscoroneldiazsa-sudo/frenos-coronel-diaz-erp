@@ -72,7 +72,7 @@
       }
     </style>
     <link rel="stylesheet" href="/styles.css?v=20260522-7" />
-    <link rel="stylesheet" href="/erp-theme.css?v=20260523-1" />
+    <link rel="stylesheet" href="/erp-theme.css?v=20260523-2" />
   </head>
   <body class="booting">
     <div id="bootScreen" class="boot-screen" role="status" aria-live="polite">
@@ -188,49 +188,49 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
           </button>
         </div>
-        <button class="menu-item active" type="button" data-view="dashboard">
+        <button class="menu-item active" type="button" data-view="dashboard" data-section="dashboard">
           <span class="menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="8" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="15" width="7" height="6" rx="1.5"></rect></svg>
           </span>
           <span>Tablero</span>
         </button>
-        <button class="menu-item" type="button" data-view="catalogo">
+        <button class="menu-item" type="button" data-view="catalogo" data-section="catalogo">
           <span class="menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path><path d="M8 5v14"></path></svg>
           </span>
           <span>Catálogo</span>
         </button>
-        <button class="menu-item" type="button" data-view="venta">
+        <button class="menu-item" type="button" data-view="venta" data-section="venta">
           <span class="menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M3 4h2l2.4 11.5a2 2 0 0 0 2 1.5H18a2 2 0 0 0 2-1.6L21 8H7"></path></svg>
           </span>
           <span>Ventas</span>
         </button>
-        <button class="menu-item" type="button" data-view="inventario">
+        <button class="menu-item" type="button" data-view="inventario" data-section="inventario">
           <span class="menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M4 7l8-4 8 4-8 4-8-4z"></path><path d="M4 7v10l8 4 8-4V7"></path><path d="M12 11v10"></path></svg>
           </span>
           <span>Inventario</span>
         </button>
-        <button class="menu-item admin-only" type="button" data-view="actualizar-stock">
+        <button class="menu-item admin-only" type="button" data-view="actualizar-stock" data-section="actualizar-stock">
           <span class="menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path><path d="M4 19h16"></path></svg>
           </span>
           <span>Actualizar stock</span>
         </button>
-        <button class="menu-item admin-only" type="button" data-view="movimientos">
+        <button class="menu-item admin-only" type="button" data-view="movimientos" data-section="movimientos">
           <span class="menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3"></path><path d="M17 17H6l3 3"></path><path d="M18 7l-3 3"></path><path d="M6 17l3-3"></path></svg>
           </span>
           <span>Movimientos</span>
         </button>
-        <button class="menu-item admin-only" type="button" data-view="usuarios">
+        <button class="menu-item admin-only" type="button" data-view="usuarios" data-section="usuarios">
           <span class="menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3.5 20a5.5 5.5 0 0 1 11 0"></path><circle cx="17" cy="10" r="2"></circle><path d="M16 15.5a4.5 4.5 0 0 1 4.5 4.5"></path></svg>
           </span>
           <span>Usuarios</span>
         </button>
-        <button class="menu-item admin-only" type="button" data-view="ajustes">
+        <button class="menu-item admin-only" type="button" data-view="ajustes" data-section="ajustes">
           <span class="menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.4 1a7.6 7.6 0 0 0-2-1.2L14.2 3h-4.4l-.3 2.6a7.6 7.6 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.4-1a7.6 7.6 0 0 0 2 1.2l.3 2.6h4.4l.3-2.6a7.6 7.6 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"></path></svg>
           </span>
@@ -240,7 +240,7 @@
       </nav>
 
       <section class="workspace">
-        <section class="catalog-search catalog-search-toolbar module-screen" data-module="catalogo" hidden aria-hidden="true">
+        <section class="catalog-search catalog-search-toolbar module-screen section" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
           <div class="global-search">
         <label for="searchInput">Buscar en Catálogo</label>
             <div class="search-row">
@@ -268,7 +268,7 @@
         </section>
 
         <div class="workspace-scroll">
-          <section class="panel home-module module-screen" data-module="inicio" hidden aria-hidden="true">
+          <section class="panel home-module module-screen section" data-module="inicio" data-section="inicio" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Inicio</h2>
@@ -291,7 +291,7 @@
             </div>
           </section>
 
-          <section class="panel search-panel module-screen sales-product-picker" data-module="catalogo" hidden aria-hidden="true">
+          <section class="panel search-panel module-screen section sales-product-picker" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Catálogo</h2>
@@ -336,7 +336,7 @@
             </div>
           </section>
 
-          <section class="panel sales-pos-panel module-screen" id="salesPosPanel" data-module="venta" hidden aria-hidden="true">
+          <section class="panel sales-pos-panel module-screen section" id="salesPosPanel" data-module="venta" data-section="venta" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <p class="eyebrow">Punto de venta</p>
@@ -380,7 +380,7 @@
             </div>
           </section>
 
-          <section class="panel executive-dashboard module-screen is-active" id="executiveDashboard" data-module="dashboard">
+          <section class="panel executive-dashboard module-screen section active is-active" id="executiveDashboard" data-module="dashboard" data-section="dashboard">
             <div class="dashboard-hero">
               <div>
                 <p class="eyebrow">Control empresarial</p>
@@ -431,7 +431,7 @@
             </div>
           </section>
 
-          <section class="panel sales-dashboard module-screen sales-module" id="salesDashboard" data-module="venta" hidden aria-hidden="true">
+          <section class="panel sales-dashboard module-screen section sales-module" id="salesDashboard" data-module="venta" data-section="venta" hidden aria-hidden="true">
         <div class="section-head sales-module-head">
           <div>
             <p class="eyebrow">Punto de venta</p>
@@ -461,7 +461,7 @@
         </div>
           </section>
 
-          <section class="panel product-dashboard module-screen" id="productDashboard" data-module="catalogo" hidden aria-hidden="true">
+          <section class="panel product-dashboard module-screen section" id="productDashboard" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
         <div class="section-head">
           <div>
             <h2>Productos</h2>
@@ -521,7 +521,7 @@
         </form>
           </section>
 
-          <section class="panel placeholder-module module-screen" data-module="usuarios" hidden aria-hidden="true">
+          <section class="panel placeholder-module module-screen section" data-module="usuarios" data-section="usuarios" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Usuarios</h2>
@@ -531,7 +531,7 @@
             <div class="empty-state">Módulo reservado para gestión de usuarios.</div>
           </section>
 
-          <section class="panel inventory-module module-screen" data-module="inventario" hidden aria-hidden="true">
+          <section class="panel inventory-module module-screen section" data-module="inventario" data-section="inventario" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Inventario</h2>
@@ -577,7 +577,7 @@
             </div>
           </section>
 
-          <section class="panel stock-update-module module-screen" data-module="actualizar-stock" hidden aria-hidden="true">
+          <section class="panel stock-update-module module-screen section" data-module="actualizar-stock" data-section="actualizar-stock" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Actualizar stock</h2>
@@ -623,7 +623,7 @@
             </div>
           </section>
 
-          <section class="panel placeholder-module module-screen" data-module="ajustes" hidden aria-hidden="true">
+          <section class="panel placeholder-module module-screen section" data-module="ajustes" data-section="ajustes" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Ajustes</h2>
@@ -633,7 +633,7 @@
             <div class="empty-state">Módulo reservado para parámetros generales.</div>
           </section>
 
-          <section class="panel movements-module module-screen" data-module="movimientos" hidden aria-hidden="true">
+          <section class="panel movements-module module-screen section" data-module="movimientos" data-section="movimientos" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Movimientos</h2>
@@ -647,7 +647,7 @@
       </section>
 
       <div class="sale-modal-backdrop" aria-hidden="true"></div>
-      <aside class="panel sale-panel module-screen sale-drawer" data-module="venta" hidden aria-hidden="true">
+      <aside class="panel sale-panel module-screen section sale-drawer" data-module="venta" data-section="venta" hidden aria-hidden="true">
         <div class="sale-drawer-handle" aria-hidden="true"></div>
         <header class="sale-drawer-head">
           <div>
@@ -704,7 +704,7 @@
       </aside>
     </main>
 
-    <script src="/app.js?v=20260523-1"></script>
+    <script src="/app.js?v=20260523-2"></script>
     <script>
       window.setTimeout(function () {
         document.body.classList.remove("booting");

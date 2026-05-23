@@ -2787,3 +2787,9 @@ body:not(.locked) .section:not(.active):not(.is-active) {
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+body:not(.locked) .section.active[data-section],
+body:not(.locked) .section.is-active[data-section] {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}

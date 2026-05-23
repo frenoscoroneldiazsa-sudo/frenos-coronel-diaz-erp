@@ -119,6 +119,57 @@ document.body.classList.add("locked");
 const bootFallback = window.setTimeout(hideBootScreen, 3500);
 let loaderCount = 0;
 const SIDEBAR_COLLAPSED_KEY = "erp.sidebarCollapsed";
+const ERP_MODULES = {
+  dashboard: {
+    label: "Tablero",
+    note: "Módulo actual: tablero ejecutivo y control general.",
+    onEnter: () => loadDashboard(),
+  },
+  catalogo: {
+    label: "Catálogo",
+    note: "Módulo actual: catálogo y consulta de productos.",
+    onEnter: () => {
+      if (searchLabel) searchLabel.textContent = "Buscar en Catálogo";
+      if (searchInput) {
+        searchInput.placeholder = "Código, código de barras, marca, descripción, aplicación...";
+        searchInput.focus();
+      }
+      if (state.products.length === 0) searchProducts();
+    },
+  },
+  venta: {
+    label: "Ventas",
+    note: "Módulo actual: punto de venta, carrito y descuento de stock.",
+    onEnter: () => {
+      salesSearchInput?.focus();
+      renderSalesProducts();
+      loadSalesSummary();
+      window.requestAnimationFrame(() => selectedProduct?.scrollIntoView({ block: "nearest" }));
+    },
+  },
+  inventario: {
+    label: "Inventario",
+    note: "Módulo actual: inventario y stock crítico.",
+    onEnter: () => loadInventory(),
+  },
+  "actualizar-stock": {
+    label: "Actualizar stock",
+    note: "Módulo actual: actualización manual e importación Excel.",
+  },
+  movimientos: {
+    label: "Movimientos",
+    note: "Módulo actual: historial de ventas, ajustes y operaciones.",
+    onEnter: () => loadMovements(state.selected?.id ?? 0),
+  },
+  usuarios: {
+    label: "Usuarios",
+    note: "Módulo actual: usuarios y permisos.",
+  },
+  ajustes: {
+    label: "Ajustes",
+    note: "Módulo actual: configuración general.",
+  },
+};
 
 function showPageLoader() {
   loaderCount += 1;
@@ -760,15 +811,20 @@ function updateMenuByRole() {
   });
 }
 
+function getSectionName(element) {
+  return element?.dataset.section || element?.dataset.module || element?.dataset.view || "";
+}
+
 function setActiveMenu(view) {
+  const moduleConfig = ERP_MODULES[view] || {};
   document.body.dataset.module = view;
   closeMobileMenu();
   menuItems.forEach((item) => {
-    const itemSection = item.dataset.section || item.dataset.view;
+    const itemSection = getSectionName(item);
     item.classList.toggle("active", itemSection === view);
   });
   moduleScreens.forEach((screen) => {
-    const screenSection = screen.dataset.section || screen.dataset.module;
+    const screenSection = getSectionName(screen);
     const isVisible = screenSection === view;
     screen.classList.add("section");
     screen.dataset.section = screenSection || "";
@@ -779,7 +835,7 @@ function setActiveMenu(view) {
     screen.setAttribute("aria-hidden", String(!isVisible));
   });
 
-  const notes = {
+  const legacyNotes = {
     dashboard: "Módulo actual: tablero ejecutivo y control general.",
     venta: "Módulo actual: ventas y descuento de stock.",
     catalogo: "Módulo actual: catálogo y edición de productos.",
@@ -789,29 +845,9 @@ function setActiveMenu(view) {
     usuarios: "Usuarios: módulo pendiente de habilitación.",
     ajustes: "Ajustes: módulo pendiente de configuración.",
   };
-  menuNote.textContent = notes[view] || "Módulo seleccionado.";
+  menuNote.textContent = moduleConfig.note || legacyNotes[view] || "Módulo seleccionado.";
 
-  if (view === "dashboard") {
-    loadDashboard();
-  }
-  if (view === "catalogo") {
-    if (searchLabel) {
-      searchLabel.textContent = "Buscar en Catálogo";
-    }
-    if (searchInput) {
-      searchInput.placeholder = "Código, código de barras, marca, descripción, aplicación...";
-    }
-    searchInput.focus();
-  }
-  if (view === "venta") {
-    salesSearchInput?.focus();
-  }
-  if (view === "inventario") {
-    loadInventory();
-  }
-  if (view === "venta") {
-    selectedProduct.scrollIntoView({ block: "nearest" });
-  }
+  moduleConfig.onEnter?.();
 }
 
 async function loadInventory() {
@@ -1211,7 +1247,6 @@ async function loadInitialData() {
     await loadSummary();
     await loadFilters();
     await searchProducts();
-    await searchSalesProducts();
     await loadMovements();
     await loadSalesSummary();
     await loadDashboard();

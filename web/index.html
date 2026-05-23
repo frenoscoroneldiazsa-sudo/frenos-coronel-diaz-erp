@@ -72,7 +72,7 @@
       }
     </style>
     <link rel="stylesheet" href="/styles.css?v=20260522-7" />
-    <link rel="stylesheet" href="/erp-theme.css?v=20260523-2" />
+    <link rel="stylesheet" href="/erp-theme.css?v=20260523-3" />
   </head>
   <body class="booting">
     <div id="bootScreen" class="boot-screen" role="status" aria-live="polite">
@@ -240,7 +240,7 @@
       </nav>
 
       <section class="workspace">
-        <section class="catalog-search catalog-search-toolbar module-screen section" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
+        <section id="catalogToolbar" class="catalog-search catalog-search-toolbar module-screen section" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
           <div class="global-search">
         <label for="searchInput">Buscar en Catálogo</label>
             <div class="search-row">
@@ -268,7 +268,7 @@
         </section>
 
         <div class="workspace-scroll">
-          <section class="panel home-module module-screen section" data-module="inicio" data-section="inicio" hidden aria-hidden="true">
+          <section id="homeModule" class="panel home-module module-screen section" data-module="inicio" data-section="inicio" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Inicio</h2>
@@ -291,7 +291,7 @@
             </div>
           </section>
 
-          <section class="panel search-panel module-screen section sales-product-picker" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
+          <section id="catalogModule" class="panel search-panel module-screen section sales-product-picker" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Catálogo</h2>
@@ -521,7 +521,7 @@
         </form>
           </section>
 
-          <section class="panel placeholder-module module-screen section" data-module="usuarios" data-section="usuarios" hidden aria-hidden="true">
+          <section id="usersModule" class="panel placeholder-module module-screen section" data-module="usuarios" data-section="usuarios" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Usuarios</h2>
@@ -531,7 +531,7 @@
             <div class="empty-state">Módulo reservado para gestión de usuarios.</div>
           </section>
 
-          <section class="panel inventory-module module-screen section" data-module="inventario" data-section="inventario" hidden aria-hidden="true">
+          <section id="inventoryModule" class="panel inventory-module module-screen section" data-module="inventario" data-section="inventario" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Inventario</h2>
@@ -577,7 +577,7 @@
             </div>
           </section>
 
-          <section class="panel stock-update-module module-screen section" data-module="actualizar-stock" data-section="actualizar-stock" hidden aria-hidden="true">
+          <section id="stockModule" class="panel stock-update-module module-screen section" data-module="actualizar-stock" data-section="actualizar-stock" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Actualizar stock</h2>
@@ -623,7 +623,7 @@
             </div>
           </section>
 
-          <section class="panel placeholder-module module-screen section" data-module="ajustes" data-section="ajustes" hidden aria-hidden="true">
+          <section id="settingsModule" class="panel placeholder-module module-screen section" data-module="ajustes" data-section="ajustes" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Ajustes</h2>
@@ -633,7 +633,7 @@
             <div class="empty-state">Módulo reservado para parámetros generales.</div>
           </section>
 
-          <section class="panel movements-module module-screen section" data-module="movimientos" data-section="movimientos" hidden aria-hidden="true">
+          <section id="movementsModule" class="panel movements-module module-screen section" data-module="movimientos" data-section="movimientos" hidden aria-hidden="true">
             <div class="section-head">
               <div>
                 <h2>Movimientos</h2>
@@ -647,7 +647,7 @@
       </section>
 
       <div class="sale-modal-backdrop" aria-hidden="true"></div>
-      <aside class="panel sale-panel module-screen section sale-drawer" data-module="venta" data-section="venta" hidden aria-hidden="true">
+      <aside id="salePanel" class="panel sale-panel module-screen section sale-drawer" data-module="venta" data-section="venta" hidden aria-hidden="true">
         <div class="sale-drawer-handle" aria-hidden="true"></div>
         <header class="sale-drawer-head">
           <div>
@@ -704,7 +704,7 @@
       </aside>
     </main>
 
-    <script src="/app.js?v=20260523-2"></script>
+    <script src="/app.js?v=20260523-3"></script>
     <script>
       window.setTimeout(function () {
         document.body.classList.remove("booting");

@@ -4,6 +4,8 @@ const state = {
   salesProducts: [],
   user: null,
   cart: [],
+  catalogDirty: true,
+  salesDirty: true,
 };
 
 const bootScreen = document.querySelector("#bootScreen");
@@ -134,7 +136,7 @@ const ERP_MODULES = {
         searchInput.placeholder = "Código, código de barras, marca, descripción, aplicación...";
         searchInput.focus();
       }
-      if (state.products.length === 0) searchProducts();
+      if (state.products.length === 0 || state.catalogDirty) searchProducts();
     },
   },
   venta: {
@@ -142,7 +144,11 @@ const ERP_MODULES = {
     note: "Módulo actual: punto de venta, carrito y descuento de stock.",
     onEnter: () => {
       salesSearchInput?.focus();
-      renderSalesProducts();
+      if (salesSearchInput?.value.trim() && state.salesDirty) {
+        searchSalesProducts();
+      } else {
+        renderSalesProducts();
+      }
       loadSalesSummary();
       window.requestAnimationFrame(() => selectedProduct?.scrollIntoView({ block: "nearest" }));
     },
@@ -328,6 +334,35 @@ function stockClass(stock) {
   return Number(stock) <= 0 ? "stock low" : "stock";
 }
 
+function activeModule() {
+  return document.body.dataset.module || "dashboard";
+}
+
+function markProductDataDirty() {
+  state.catalogDirty = true;
+  state.salesDirty = true;
+}
+
+async function refreshActiveModuleData(productId = state.selected?.id) {
+  await loadSummary();
+  const current = activeModule();
+  if (current === "catalogo") {
+    await searchProducts();
+  }
+  if (current === "venta" && salesSearchInput?.value.trim()) {
+    await searchSalesProducts();
+  }
+  if (current === "inventario") {
+    await loadInventory();
+  }
+  if (current === "dashboard") {
+    await loadDashboard();
+  }
+  if (current === "movimientos" || productId) {
+    await loadMovements(productId || 0);
+  }
+}
+
 async function loadSummary() {
   const response = await fetch("/api/resumen");
   if (!ensureAllowed(response)) return;
@@ -354,6 +389,7 @@ async function searchProducts() {
     if (!ensureAllowed(response)) return;
     const data = await response.json();
     state.products = data.productos || [];
+    state.catalogDirty = false;
     renderProducts(query);
     setSearchCounter(state.products.length, data.total ?? state.products.length);
     if (state.products.length === 0) {
@@ -384,6 +420,7 @@ async function searchSalesProducts() {
     if (!ensureAllowed(response)) return [];
     const data = await response.json();
     state.salesProducts = data.productos || [];
+    state.salesDirty = false;
     renderSalesProducts(query);
     setSalesSearchCounter(state.salesProducts.length, data.total ?? state.salesProducts.length);
     setSalesSearchStatus(
@@ -642,11 +679,9 @@ async function registerSale(event) {
   state.selected.stock = data.stock_nuevo;
   state.selected.stock_unidad = data.stock_unidad;
   state.selected.stock_deposito = data.stock_deposito;
-  await loadSummary();
-  await searchProducts();
-  await searchSalesProducts();
-  await loadInventory();
-  const fresh = state.products.find((product) => product.id === state.selected.id);
+  markProductDataDirty();
+  await refreshActiveModuleData(state.selected.id);
+  const fresh = [...state.products, ...state.salesProducts].find((product) => product.id === state.selected.id);
   if (fresh) {
     selectProduct(fresh);
   } else {
@@ -734,12 +769,9 @@ async function confirmCartSale(event) {
   cartCustomer.value = "";
   cartNote.value = "";
   renderCart();
-  await loadSummary();
-  await searchProducts();
-  await searchSalesProducts();
+  markProductDataDirty();
+  await refreshActiveModuleData();
   await loadSalesSummary();
-  await loadDashboard();
-  await loadInventory();
 }
 
 function setMessage(text, type) {
@@ -935,11 +967,8 @@ async function saveStockAdjust(event) {
   }
   stockAdjustMessage.textContent = `Stock actualizado. Total: ${data.stock_nuevo}`;
   stockAdjustMessage.className = "message ok";
-  await loadSummary();
-  await searchProducts();
-  await searchSalesProducts();
-  await loadInventory();
-  await loadMovements(state.selected.id);
+  markProductDataDirty();
+  await refreshActiveModuleData(state.selected.id);
 }
 
 function readExcelFile() {
@@ -1036,11 +1065,9 @@ async function importExcel() {
   }
   excelMessage.textContent = `Importación completa: ${data.nuevos} nuevos, ${data.actualizados} actualizados, ${data.ignorados} ignorados.`;
   excelMessage.className = "message ok";
+  markProductDataDirty();
   await loadFilters();
-  await searchProducts();
-  await searchSalesProducts();
-  await loadInventory();
-  await loadMovements();
+  await refreshActiveModuleData();
 }
 
 async function loadDashboard() {
@@ -1154,9 +1181,9 @@ async function saveProduct(event) {
   state.selected = data.producto;
   productEditorMessage.textContent = "Producto guardado.";
   productEditorMessage.className = "message ok";
+  markProductDataDirty();
   await loadFilters();
-  await searchProducts();
-  await searchSalesProducts();
+  await refreshActiveModuleData(state.selected.id);
   const fresh = state.products.find((product) => product.id === state.selected.id);
   if (fresh) selectProduct(fresh);
 }
@@ -1246,11 +1273,7 @@ async function loadInitialData() {
   await withPageLoader(async () => {
     await loadSummary();
     await loadFilters();
-    await searchProducts();
-    await loadMovements();
-    await loadSalesSummary();
     await loadDashboard();
-    await loadInventory();
     renderCart();
   });
 }
@@ -1303,7 +1326,6 @@ refreshButton.addEventListener("click", async () => {
   await loadSummary();
   await loadFilters();
   await searchProducts();
-  await searchSalesProducts();
   await loadMovements(state.selected?.id ?? 0);
 });
 searchInput.addEventListener("keydown", (event) => {

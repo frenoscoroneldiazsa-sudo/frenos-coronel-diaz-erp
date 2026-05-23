@@ -23,7 +23,7 @@ const pageLoader = document.querySelector("#pageLoader");
 const sideMenu = document.querySelector("#sideMenu");
 const menuItems = document.querySelectorAll(".menu-item");
 const adminOnlyItems = document.querySelectorAll(".admin-only");
-const moduleScreens = document.querySelectorAll(".section, .module-screen");
+let moduleScreens = document.querySelectorAll(".erp-module");
 const menuNote = document.querySelector("#menuNote");
 const executiveDashboard = document.querySelector("#executiveDashboard");
 const refreshDashboardButton = document.querySelector("#refreshDashboardButton");
@@ -176,6 +176,54 @@ const ERP_MODULES = {
     note: "Módulo actual: configuración general.",
   },
 };
+
+function normalizeModuleChild(element) {
+  if (!element) return null;
+  element.classList.remove("section", "module-screen", "active", "is-active");
+  element.hidden = false;
+  element.removeAttribute("aria-hidden");
+  element.style.display = "";
+  return element;
+}
+
+function ensureModuleShell(workspaceScroll, sectionName, childIds) {
+  let shell = document.querySelector(`.erp-module[data-section="${sectionName}"]`);
+  if (!shell) {
+    shell = document.createElement("section");
+    shell.id = `${sectionName}Section`;
+    shell.className = "erp-module section";
+    shell.dataset.section = sectionName;
+    shell.dataset.module = sectionName;
+    shell.hidden = true;
+    shell.setAttribute("aria-hidden", "true");
+    workspaceScroll.appendChild(shell);
+  }
+
+  childIds.forEach((id) => {
+    const child = document.querySelector(`#${id}`);
+    if (child) shell.appendChild(normalizeModuleChild(child));
+  });
+  return shell;
+}
+
+function buildModuleShells() {
+  const workspaceScroll = document.querySelector(".workspace-scroll");
+  if (!workspaceScroll || document.querySelector(".erp-module")) return;
+
+  const definitions = [
+    ["dashboard", ["executiveDashboard"]],
+    ["catalogo", ["catalogToolbar", "catalogModule", "productDashboard"]],
+    ["venta", ["salesPosPanel", "salesDashboard", "salePanel"]],
+    ["inventario", ["inventoryModule"]],
+    ["actualizar-stock", ["stockModule"]],
+    ["movimientos", ["movementsModule"]],
+    ["usuarios", ["usersModule"]],
+    ["ajustes", ["settingsModule"]],
+  ];
+
+  definitions.forEach(([sectionName, childIds]) => ensureModuleShell(workspaceScroll, sectionName, childIds));
+  moduleScreens = document.querySelectorAll(".erp-module");
+}
 
 function showPageLoader() {
   loaderCount += 1;
@@ -849,6 +897,7 @@ function getSectionName(element) {
 
 function setActiveMenu(view) {
   const moduleConfig = ERP_MODULES[view] || {};
+  if (!moduleScreens.length) buildModuleShells();
   document.body.dataset.module = view;
   closeMobileMenu();
   menuItems.forEach((item) => {
@@ -1428,6 +1477,7 @@ sidebarCollapse?.addEventListener("click", () => {
 
 async function startApp() {
   try {
+    buildModuleShells();
     await checkSession();
   } catch (error) {
     console.error("No se pudo iniciar el sistema.", error);

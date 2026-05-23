@@ -2793,3 +2793,78 @@ body:not(.locked) .section.is-active[data-section] {
   min-width: 0 !important;
   max-width: 100% !important;
 }
+
+/* Modulos reales: solo el contenedor activo se ve; los paneles internos no son secciones. */
+body:not(.locked) .erp-module {
+  display: none !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body:not(.locked) .erp-module[hidden] *,
+body:not(.locked) .erp-module[aria-hidden="true"] * {
+  display: none !important;
+}
+
+body:not(.locked) .erp-module.active:not([hidden]),
+body:not(.locked) .erp-module.is-active:not([hidden]) {
+  display: block !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+body:not(.locked)[data-module="catalogo"] .erp-module[data-section="catalogo"].active,
+body:not(.locked)[data-module="catalogo"] .erp-module[data-section="catalogo"].is-active {
+  display: grid !important;
+  grid-template-rows: auto minmax(280px, 1fr) minmax(260px, 0.9fr) !important;
+  gap: var(--erp-space-md) !important;
+  overflow: hidden !important;
+}
+
+body:not(.locked)[data-module="venta"] .erp-module[data-section="venta"].active,
+body:not(.locked)[data-module="venta"] .erp-module[data-section="venta"].is-active {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px) !important;
+  grid-template-rows: minmax(280px, 1fr) auto !important;
+  gap: var(--erp-space-md) !important;
+  overflow: hidden !important;
+}
+
+body:not(.locked)[data-module="venta"] .erp-module[data-section="venta"] #salesPosPanel {
+  min-height: 0 !important;
+}
+
+body:not(.locked)[data-module="venta"] .erp-module[data-section="venta"] #salesDashboard {
+  grid-column: 1 / 2 !important;
+}
+
+body:not(.locked)[data-module="venta"] .erp-module[data-section="venta"] #salePanel {
+  grid-column: 2 / 3 !important;
+  grid-row: 1 / 3 !important;
+  position: static !important;
+  inset: auto !important;
+  width: auto !important;
+  max-width: none !important;
+  height: 100% !important;
+  transform: none !important;
+  box-shadow: var(--erp-shadow-sm) !important;
+}
+
+@media (max-width: 960px) {
+  body:not(.locked)[data-module="venta"] .erp-module[data-section="venta"].active,
+  body:not(.locked)[data-module="venta"] .erp-module[data-section="venta"].is-active {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto auto !important;
+    overflow-y: auto !important;
+  }
+
+  body:not(.locked)[data-module="venta"] .erp-module[data-section="venta"] #salePanel {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    height: auto !important;
+  }
+}

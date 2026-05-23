@@ -770,6 +770,7 @@ function setActiveMenu(view) {
     const isVisible = screen.dataset.module === view;
     screen.classList.toggle("is-active", isVisible);
     screen.hidden = !isVisible;
+    screen.style.display = isVisible ? "" : "none";
     screen.setAttribute("aria-hidden", String(!isVisible));
   });
 
@@ -790,13 +791,10 @@ function setActiveMenu(view) {
   }
   if (view === "catalogo") {
     if (searchLabel) {
-      searchLabel.textContent = view === "venta" ? "Buscar producto para vender" : "Buscar en todo el catálogo";
+      searchLabel.textContent = "Buscar en Catálogo";
     }
     if (searchInput) {
-      searchInput.placeholder =
-        view === "venta"
-          ? "Código, código de barras, producto, marca o vehículo..."
-          : "Código, código de barras, marca, descripción, aplicación...";
+      searchInput.placeholder = "Código, código de barras, marca, descripción, aplicación...";
     }
     searchInput.focus();
   }

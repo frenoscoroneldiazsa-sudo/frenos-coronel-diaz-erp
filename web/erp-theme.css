@@ -2733,3 +2733,19 @@ body:not(.locked) .workspace-scroll > .module-screen[hidden],
 body:not(.locked) .workspace-scroll > .module-screen[aria-hidden="true"] {
   display: none !important;
 }
+
+body:not(.locked) .module-screen[hidden],
+body:not(.locked) .module-screen[aria-hidden="true"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body:not(.locked) .module-screen.is-active:not([hidden]) {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+body:not(.locked)[data-module="catalogo"] .catalog-search-toolbar.module-screen.is-active:not([hidden]) {
+  display: grid !important;
+}

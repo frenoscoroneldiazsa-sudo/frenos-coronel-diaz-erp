@@ -72,7 +72,7 @@
       }
     </style>
     <link rel="stylesheet" href="/styles.css?v=20260522-7" />
-    <link rel="stylesheet" href="/erp-theme.css?v=20260522-15" />
+    <link rel="stylesheet" href="/erp-theme.css?v=20260523-1" />
   </head>
   <body class="booting">
     <div id="bootScreen" class="boot-screen" role="status" aria-live="polite">
@@ -240,11 +240,11 @@
       </nav>
 
       <section class="workspace">
-        <section class="catalog-search catalog-search-toolbar">
+        <section class="catalog-search catalog-search-toolbar module-screen" data-module="catalogo" hidden aria-hidden="true">
           <div class="global-search">
-        <label for="searchInput">Buscar en todo el catálogo</label>
+        <label for="searchInput">Buscar en Catálogo</label>
             <div class="search-row">
-              <input id="searchInput" type="search" placeholder="Codigo, codigo de barras, marca, descripcion, aplicacion..." autofocus />
+              <input id="searchInput" type="search" placeholder="Código, código de barras, marca, descripción, aplicación..." />
               <button id="searchButton" type="button">Buscar</button>
             </div>
             <div class="search-feedback" aria-live="polite">
@@ -704,7 +704,7 @@
       </aside>
     </main>
 
-    <script src="/app.js?v=20260522-11"></script>
+    <script src="/app.js?v=20260523-1"></script>
     <script>
       window.setTimeout(function () {
         document.body.classList.remove("booting");

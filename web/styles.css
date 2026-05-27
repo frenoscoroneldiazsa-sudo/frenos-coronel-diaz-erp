@@ -2011,3 +2011,256 @@ body:not(.locked) .cart-items {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ERP REFACTOR — Fix visual + UI improvements
+   Bloque final. Las 2013 líneas originales intactas.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. MÓDULOS: visibilidad .erp-module ─────────────────────────────────── */
+.erp-module { display: none !important; }
+.erp-module.is-active { display: block !important; }
+
+/* ── 2. FIX CATÁLOGO: workspace-scroll con un solo hijo visible ──────────── */
+body:not(.locked)[data-module="catalogo"] .workspace-scroll {
+  grid-template-rows: minmax(0, 1fr) !important;
+  overflow-y: auto !important;
+}
+body:not(.locked)[data-module="catalogo"] #catalogSection.erp-module.is-active {
+  display: flex !important;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+#catalogSection #catalogToolbar {
+  flex: 0 0 auto;
+}
+/* FIX CRÍTICO: #catalogModule NO tiene .module-screen → display:none no aplica,
+   pero tampoco se muestra como flex. Lo forzamos explícitamente. */
+#catalogSection #catalogModule {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+#catalogSection #productDashboard {
+  flex: 0 0 auto;
+  max-height: 42vh;
+  overflow-y: auto;
+  border-top: 1px solid var(--erp-border, rgba(148,163,184,.15));
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+/* ── 3. FIX VENTAS: workspace-scroll con un solo hijo visible ────────────── */
+body:not(.locked)[data-module="venta"] .workspace-scroll {
+  grid-template-rows: minmax(0, 1fr) !important;
+  overflow: hidden !important;
+}
+body:not(.locked)[data-module="venta"] #ventaSection.erp-module.is-active {
+  display: flex !important;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+#ventaSection #salesPosPanel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+#ventaSection #salesDashboard {
+  flex: 0 0 auto;
+  max-height: 30vh;
+  overflow-y: auto;
+  border-top: 1px solid var(--erp-border, rgba(148,163,184,.15));
+  padding-top: 10px;
+  margin-top: 8px;
+}
+#salesDashboard .section-head { display: none !important; }
+
+/* ── 4. FIX SALE-PANEL: quitar borde rojo de erp-theme.css línea 1673 ────── */
+body:not(.locked) #salePanel { display: none; }
+body:not(.locked)[data-module="venta"] #salePanel {
+  display: flex !important;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  border-left: none !important;
+}
+#salePanel .sale-drawer-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: 18px;
+  min-height: 0;
+  overflow-y: auto;
+}
+.sale-modal-backdrop { display: none !important; }
+
+/* ── 5. MEJORA CATÁLOGO: tabla más compacta y legible ───────────────────── */
+#catalogModule .table-wrap table {
+  font-size: 13px;
+}
+#catalogModule .table-wrap th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  padding: 8px 10px;
+}
+#catalogModule .table-wrap td {
+  padding: 7px 10px;
+  vertical-align: middle;
+}
+#catalogModule .table-wrap tbody tr:hover {
+  background: rgba(59,130,246,.07);
+}
+#catalogModule .table-wrap tbody tr.selected {
+  background: rgba(59,130,246,.14);
+  outline: 1px solid rgba(59,130,246,.3);
+}
+.row-actions { white-space: nowrap; }
+.row-actions button {
+  padding: 3px 8px;
+  font-size: 12px;
+  border-radius: 5px;
+  margin-right: 3px;
+}
+
+/* ── 6. MEJORA VENTAS: tabla de resultados más compacta ─────────────────── */
+#salesPosPanel .table-wrap table { font-size: 13px; }
+#salesPosPanel .table-wrap th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  padding: 8px 10px;
+}
+#salesPosPanel .table-wrap td {
+  padding: 7px 10px;
+  vertical-align: middle;
+}
+
+/* ── 7. STOCK SEMÁNTICO: colores en celdas de stock ─────────────────────── */
+.stock.stock-empty {
+  color: #ef4444;
+  font-weight: 700;
+}
+.stock.stock-low {
+  color: #f59e0b;
+  font-weight: 700;
+}
+.stock.stock-ok {
+  color: #22c55e;
+}
+
+/* ── 8. MEJORA MOVIMIENTOS: tarjetas formateadas ────────────────────────── */
+.movement-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--erp-border, rgba(148,163,184,.15));
+  background: var(--erp-surface, #131b2e);
+}
+.mov-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mov-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.mov-venta  { background: rgba(59,130,246,.18); color: #60a5fa; }
+.mov-ajuste { background: rgba(245,158,11,.18); color: #fbbf24; }
+.mov-compra { background: rgba(34,197,94,.18);  color: #4ade80; }
+.mov-otro   { background: rgba(148,163,184,.15); color: #94a3b8; }
+.mov-fecha  { font-size: 12px; color: var(--erp-muted, #94a3b8); }
+.mov-producto {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+}
+.mov-producto strong { color: var(--erp-text, #f1f5fb); }
+.mov-producto span   { color: var(--erp-muted, #94a3b8); font-size: 12px; }
+.mov-detalle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--erp-muted, #94a3b8);
+}
+.mov-cantidad { font-weight: 700; }
+.mov-cantidad.pos { color: #4ade80; }
+.mov-cantidad.neg { color: #f87171; }
+.mov-motivo {
+  font-size: 12px;
+  color: var(--erp-muted, #94a3b8);
+  font-style: italic;
+}
+.mov-nota {
+  font-size: 11px;
+  color: var(--erp-muted, #94a3b8);
+  opacity: .7;
+}
+
+/* ── 9. MEJORA TABLERO: KPIs con colores de alerta ─────────────────────── */
+.kpi-card.warning .kpi-card--nostock strong,
+#kpiNoStock { color: #f59e0b !important; }
+#kpiCritical { color: #ef4444 !important; }
+.kpi-card.danger strong { color: #ef4444 !important; }
+
+/* ── 10. MEJORA LOGIN: reducir espacio vacío superior ───────────────────── */
+.catalog-home-top {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+.catalog-home-top + .home-hero,
+.home-hero { margin-top: 0 !important; }
+
+/* ── 11. MEJORA STOCK: botón disabled visible ───────────────────────────── */
+#importExcelButton:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── 12. TABLAS RESPONSIVE: scroll horizontal en móvil ──────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── 13. MEJORA PRODUCTO EDITOR: estado vacío más compacto ─────────────── */
+#productEditorEmpty {
+  padding: 16px !important;
+  font-size: 13px;
+}
+.product-editor.is-hidden { display: none !important; }
+
+/* ── 14. RESPONSIVE ≤960px ──────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  body:not(.locked)[data-module="venta"] #salePanel {
+    height: auto !important;
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+  #catalogSection #productDashboard {
+    max-height: 50vh;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════ */

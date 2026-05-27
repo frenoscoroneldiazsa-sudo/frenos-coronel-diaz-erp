@@ -240,34 +240,11 @@
       </nav>
 
       <section class="workspace">
-        <section id="catalogToolbar" class="catalog-search catalog-search-toolbar module-screen section" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
-          <div class="global-search">
-        <label for="searchInput">Buscar en Catálogo</label>
-            <div class="search-row">
-              <input id="searchInput" type="search" placeholder="Código, código de barras, marca, descripción, aplicación..." />
-              <button id="searchButton" type="button">Buscar</button>
-            </div>
-            <div class="search-feedback" aria-live="polite">
-              <span id="searchStatus">Listo para buscar.</span>
-              <strong id="searchCounter">0 resultados</strong>
-            </div>
-          </div>
-          <div class="filter-box">
-            <label for="providerFilter">Proveedor</label>
-            <select id="providerFilter">
-              <option value="">Todos</option>
-            </select>
-          </div>
-          <div class="filter-box">
-        <label for="categoryFilter">Categoría</label>
-            <select id="categoryFilter">
-              <option value="">Todas</option>
-            </select>
-          </div>
-          <button id="clearFiltersButton" class="secondary-button" type="button">Limpiar</button>
-        </section>
-
         <div class="workspace-scroll">
+
+          <!-- ═══════════════════════════════════════════════
+               MÓDULO: TABLERO
+          ═══════════════════════════════════════════════ -->
           <section id="homeModule" class="panel home-module module-screen section" data-module="inicio" data-section="inicio" hidden aria-hidden="true">
             <div class="section-head">
               <div>
@@ -288,95 +265,6 @@
                 <strong>Control</strong>
                 <span>Revisá indicadores y estado general desde el tablero.</span>
               </article>
-            </div>
-          </section>
-
-          <section id="catalogModule" class="panel search-panel module-screen section sales-product-picker" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
-            <div class="section-head">
-              <div>
-                <h2>Catálogo</h2>
-                <p>Búsqueda rápida por código, producto, marca, proveedor, departamento y aplicación.</p>
-                <p class="venta-picker-hint">Seleccioná un producto en la tabla y usá <strong>Agregar al carrito</strong> o el botón <strong>Vender</strong>.</p>
-              </div>
-              <button id="refreshButton" type="button">Actualizar</button>
-            </div>
-
-            <section class="catalog-assistant" aria-label="Asistente de búsqueda">
-              <div>
-                <h3>Asistente de búsqueda</h3>
-                <p>Escribí una consulta simple, por ejemplo: busco pastillas corsa, flexible gol o código 4542.</p>
-              </div>
-              <div class="assistant-row">
-                <input id="assistantInput" type="search" placeholder="Escribí lo que necesitás..." />
-                <button id="assistantButton" type="button">Buscar con asistente</button>
-              </div>
-              <div id="assistantResponse" class="assistant-response">El asistente usa el catálogo actual y no inventa productos.</div>
-              <div id="assistantResults" class="assistant-results"></div>
-            </section>
-
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Código Item</th>
-                    <th>Código de Barras</th>
-                    <th>CodArticulo</th>
-                    <th>Producto</th>
-                    <th>Marca</th>
-                    <th>Proveedor</th>
-                    <th>Departamento</th>
-                    <th>Mostrador</th>
-                    <th>Depósito</th>
-                    <th>Total</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody id="productsBody"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="panel sales-pos-panel module-screen section" id="salesPosPanel" data-module="venta" data-section="venta" hidden aria-hidden="true">
-            <div class="section-head">
-              <div>
-                <p class="eyebrow">Punto de venta</p>
-                <h2>Ventas</h2>
-                <p>Buscador rápido para caja. Los resultados de venta no se mezclan con Catálogo.</p>
-              </div>
-            </div>
-            <section class="sales-search-box">
-              <div class="global-search">
-                <label for="salesSearchInput">Buscar producto para vender</label>
-                <div class="search-row">
-                  <input id="salesSearchInput" type="search" placeholder="Código, código de barras, producto, marca o vehículo..." />
-                  <button id="salesSearchButton" type="button">Buscar</button>
-                </div>
-                <div class="search-feedback" aria-live="polite">
-                  <span id="salesSearchStatus">Listo para vender.</span>
-                  <strong id="salesSearchCounter">0 resultados</strong>
-                </div>
-              </div>
-              <button id="salesClearButton" class="secondary-button" type="button">Limpiar</button>
-            </section>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Código Item</th>
-                    <th>Código de Barras</th>
-                    <th>CodArticulo</th>
-                    <th>Producto</th>
-                    <th>Marca</th>
-                    <th>Proveedor</th>
-                    <th>Departamento</th>
-                    <th>Mostrador</th>
-                    <th>Depósito</th>
-                    <th>Total</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody id="salesProductsBody"></tbody>
-              </table>
             </div>
           </section>
 
@@ -431,106 +319,238 @@
             </div>
           </section>
 
-          <section class="panel sales-dashboard module-screen section sales-module" id="salesDashboard" data-module="venta" data-section="venta" hidden aria-hidden="true">
-        <div class="section-head sales-module-head">
-          <div>
-            <p class="eyebrow">Punto de venta</p>
-            <h2>Ventas</h2>
-            <p>Carrito, salida rápida, ranking y últimas operaciones.</p>
-          </div>
-        </div>
-        <div class="sales-kpis sales-kpis--premium">
-          <article class="kpi-card kpi-card--sales">
-            <span class="kpi-label">Operaciones</span>
-            <strong id="salesOperations">0</strong>
-          </article>
-          <article class="kpi-card kpi-card--sold">
-            <span class="kpi-label">Unidades vendidas</span>
-            <strong id="salesUnits">0</strong>
-          </article>
-        </div>
-        <div class="sales-grid sales-rankings">
-          <section>
-            <h3>Productos con mayor salida</h3>
-            <div id="topSalesList" class="rank-list"></div>
-          </section>
-          <section>
-            <h3>Últimas ventas</h3>
-            <div id="recentSalesList" class="rank-list"></div>
-          </section>
-        </div>
-          </section>
+          <!-- ═══════════════════════════════════════════════
+               MÓDULO: CATÁLOGO
+               - catalogToolbar DENTRO del módulo catalogo
+               - sin clase sales-product-picker
+          ═══════════════════════════════════════════════ -->
+          <section id="catalogSection" class="erp-module module-screen section" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
 
-          <section class="panel product-dashboard module-screen section" id="productDashboard" data-module="catalogo" data-section="catalogo" hidden aria-hidden="true">
-        <div class="section-head">
-          <div>
-            <h2>Productos</h2>
-            <p>Editar ficha, proveedor, categoría, descripción y ubicación física.</p>
-          </div>
-        </div>
-        <div id="productEditorEmpty" class="empty-state">Seleccioná un producto del catálogo para editarlo.</div>
-        <form id="productEditorForm" class="product-editor is-hidden">
-          <label>
-            Código interno
-            <input id="editCodigoItem" type="text" />
-          </label>
-          <label>
-            Código de barras
-            <input id="editCodigoBarras" type="text" />
-          </label>
-          <label>
-            Código de artículo
-            <input id="editCodigoArticulo" type="text" />
-          </label>
-          <label>
-            Producto
-            <input id="editProducto" type="text" />
-          </label>
-          <label>
-            Marca
-            <input id="editMarca" type="text" />
-          </label>
-          <label>
-            Proveedor
-            <input id="editProveedor" type="text" />
-          </label>
-          <label>
-            Categoría
-            <input id="editDepartamento" type="text" />
-          </label>
-          <label>
-            Ubicación
-            <input id="editUbicacion" type="text" placeholder="Ej: DEP-EST3-FILA2-CAJ4" />
-          </label>
-          <label>
-            Aplicación / vehículo
-            <input id="editAplicacion" type="text" />
-          </label>
-          <label>
-            Stock mínimo
-            <input id="editStockMinimo" type="number" min="0" step="1" />
-          </label>
-          <label class="wide-field">
-            Descripción
-            <textarea id="editDescripcion" rows="3"></textarea>
-          </label>
-          <div class="editor-actions">
-            <button type="submit">Guardar producto</button>
-            <p id="productEditorMessage" class="message"></p>
-          </div>
-        </form>
-          </section>
+            <!-- Barra de búsqueda del catálogo (AHORA dentro del módulo) -->
+            <div id="catalogToolbar" class="catalog-search catalog-search-toolbar">
+              <div class="global-search">
+                <label for="searchInput">Buscar en Catálogo</label>
+                <div class="search-row">
+                  <input id="searchInput" type="search" placeholder="Código, código de barras, marca, descripción, aplicación..." />
+                  <button id="searchButton" type="button">Buscar</button>
+                </div>
+                <div class="search-feedback" aria-live="polite">
+                  <span id="searchStatus">Listo para buscar.</span>
+                  <strong id="searchCounter">0 resultados</strong>
+                </div>
+              </div>
+              <div class="filter-box">
+                <label for="providerFilter">Proveedor</label>
+                <select id="providerFilter">
+                  <option value="">Todos</option>
+                </select>
+              </div>
+              <div class="filter-box">
+                <label for="categoryFilter">Categoría</label>
+                <select id="categoryFilter">
+                  <option value="">Todas</option>
+                </select>
+              </div>
+              <button id="clearFiltersButton" class="secondary-button" type="button">Limpiar</button>
+            </div>
 
-          <section id="usersModule" class="panel placeholder-module module-screen section" data-module="usuarios" data-section="usuarios" hidden aria-hidden="true">
-            <div class="section-head">
-              <div>
-                <h2>Usuarios</h2>
-                <p>Administración de usuarios y permisos del sistema.</p>
+            <!-- Tabla de catálogo -->
+            <div id="catalogModule" class="panel search-panel">
+              <div class="section-head">
+                <div>
+                  <h2>Catálogo</h2>
+                  <p>Búsqueda rápida por código, producto, marca, proveedor, departamento y aplicación.</p>
+                </div>
+                <button id="refreshButton" type="button">Actualizar</button>
+              </div>
+
+              <section class="catalog-assistant" aria-label="Asistente de búsqueda">
+                <div>
+                  <h3>Asistente de búsqueda</h3>
+                  <p>Escribí una consulta simple, por ejemplo: busco pastillas corsa, flexible gol o código 4542.</p>
+                </div>
+                <div class="assistant-row">
+                  <input id="assistantInput" type="search" placeholder="Escribí lo que necesitás..." />
+                  <button id="assistantButton" type="button">Buscar con asistente</button>
+                </div>
+                <div id="assistantResponse" class="assistant-response">El asistente usa el catálogo actual y no inventa productos.</div>
+                <div id="assistantResults" class="assistant-results"></div>
+              </section>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Código Item</th>
+                      <th>Código de Barras</th>
+                      <th>CodArticulo</th>
+                      <th>Producto</th>
+                      <th>Marca</th>
+                      <th>Proveedor</th>
+                      <th>Departamento</th>
+                      <th>Mostrador</th>
+                      <th>Depósito</th>
+                      <th>Total</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="productsBody"></tbody>
+                </table>
               </div>
             </div>
-            <div class="empty-state">Módulo reservado para gestión de usuarios.</div>
-          </section>
 
+            <!-- Editor de producto (dentro de catálogo) -->
+            <div id="productDashboard" class="panel product-dashboard">
+              <div class="section-head">
+                <div>
+                  <h2>Productos</h2>
+                  <p>Editar ficha, proveedor, categoría, descripción y ubicación física.</p>
+                </div>
+              </div>
+              <div id="productEditorEmpty" class="empty-state">Seleccioná un producto del catálogo para editarlo.</div>
+              <form id="productEditorForm" class="product-editor is-hidden">
+                <label>
+                  Código interno
+                  <input id="editCodigoItem" type="text" />
+                </label>
+                <label>
+                  Código de barras
+                  <input id="editCodigoBarras" type="text" />
+                </label>
+                <label>
+                  Código de artículo
+                  <input id="editCodigoArticulo" type="text" />
+                </label>
+                <label>
+                  Producto
+                  <input id="editProducto" type="text" />
+                </label>
+                <label>
+                  Marca
+                  <input id="editMarca" type="text" />
+                </label>
+                <label>
+                  Proveedor
+                  <input id="editProveedor" type="text" />
+                </label>
+                <label>
+                  Categoría
+                  <input id="editDepartamento" type="text" />
+                </label>
+                <label>
+                  Ubicación
+                  <input id="editUbicacion" type="text" placeholder="Ej: DEP-EST3-FILA2-CAJ4" />
+                </label>
+                <label>
+                  Aplicación / vehículo
+                  <input id="editAplicacion" type="text" />
+                </label>
+                <label>
+                  Stock mínimo
+                  <input id="editStockMinimo" type="number" min="0" step="1" />
+                </label>
+                <label class="wide-field">
+                  Descripción
+                  <textarea id="editDescripcion" rows="3"></textarea>
+                </label>
+                <div class="editor-actions">
+                  <button type="submit">Guardar producto</button>
+                  <p id="productEditorMessage" class="message"></p>
+                </div>
+              </form>
+            </div>
+
+          </section><!-- fin #catalogSection -->
+
+          <!-- ═══════════════════════════════════════════════
+               MÓDULO: VENTAS
+               - salesPosPanel, salesDashboard y salePanel
+                 todos DENTRO del módulo venta
+          ═══════════════════════════════════════════════ -->
+          <section id="ventaSection" class="erp-module module-screen section" data-module="venta" data-section="venta" hidden aria-hidden="true">
+
+            <!-- POS: búsqueda para vender -->
+            <div id="salesPosPanel" class="panel sales-pos-panel">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Punto de venta</p>
+                  <h2>Ventas</h2>
+                  <p>Buscador rápido para caja. Los resultados de venta no se mezclan con Catálogo.</p>
+                </div>
+              </div>
+              <section class="sales-search-box">
+                <div class="global-search">
+                  <label for="salesSearchInput">Buscar producto para vender</label>
+                  <div class="search-row">
+                    <input id="salesSearchInput" type="search" placeholder="Código, código de barras, producto, marca o vehículo..." />
+                    <button id="salesSearchButton" type="button">Buscar</button>
+                  </div>
+                  <div class="search-feedback" aria-live="polite">
+                    <span id="salesSearchStatus">Listo para vender.</span>
+                    <strong id="salesSearchCounter">0 resultados</strong>
+                  </div>
+                </div>
+                <button id="salesClearButton" class="secondary-button" type="button">Limpiar</button>
+              </section>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Código Item</th>
+                      <th>Código de Barras</th>
+                      <th>CodArticulo</th>
+                      <th>Producto</th>
+                      <th>Marca</th>
+                      <th>Proveedor</th>
+                      <th>Departamento</th>
+                      <th>Mostrador</th>
+                      <th>Depósito</th>
+                      <th>Total</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="salesProductsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+
+            <!-- Dashboard de ventas (rankings) -->
+            <div id="salesDashboard" class="panel sales-dashboard sales-module">
+              <div class="section-head sales-module-head">
+                <div>
+                  <p class="eyebrow">Punto de venta</p>
+                  <h2>Ventas</h2>
+                  <p>Carrito, salida rápida, ranking y últimas operaciones.</p>
+                </div>
+              </div>
+              <div class="sales-kpis sales-kpis--premium">
+                <article class="kpi-card kpi-card--sales">
+                  <span class="kpi-label">Operaciones</span>
+                  <strong id="salesOperations">0</strong>
+                </article>
+                <article class="kpi-card kpi-card--sold">
+                  <span class="kpi-label">Unidades vendidas</span>
+                  <strong id="salesUnits">0</strong>
+                </article>
+              </div>
+              <div class="sales-grid sales-rankings">
+                <section>
+                  <h3>Productos con mayor salida</h3>
+                  <div id="topSalesList" class="rank-list"></div>
+                </section>
+                <section>
+                  <h3>Últimas ventas</h3>
+                  <div id="recentSalesList" class="rank-list"></div>
+                </section>
+              </div>
+            </div>
+
+          </section><!-- fin #ventaSection -->
+
+          <!-- ═══════════════════════════════════════════════
+               MÓDULO: INVENTARIO
+          ═══════════════════════════════════════════════ -->
           <section id="inventoryModule" class="panel inventory-module module-screen section" data-module="inventario" data-section="inventario" hidden aria-hidden="true">
             <div class="section-head">
               <div>
@@ -577,6 +597,9 @@
             </div>
           </section>
 
+          <!-- ═══════════════════════════════════════════════
+               MÓDULO: ACTUALIZAR STOCK
+          ═══════════════════════════════════════════════ -->
           <section id="stockModule" class="panel stock-update-module module-screen section" data-module="actualizar-stock" data-section="actualizar-stock" hidden aria-hidden="true">
             <div class="section-head">
               <div>
@@ -623,16 +646,9 @@
             </div>
           </section>
 
-          <section id="settingsModule" class="panel placeholder-module module-screen section" data-module="ajustes" data-section="ajustes" hidden aria-hidden="true">
-            <div class="section-head">
-              <div>
-                <h2>Ajustes</h2>
-                <p>Configuración general del sistema.</p>
-              </div>
-            </div>
-            <div class="empty-state">Módulo reservado para parámetros generales.</div>
-          </section>
-
+          <!-- ═══════════════════════════════════════════════
+               MÓDULO: MOVIMIENTOS
+          ═══════════════════════════════════════════════ -->
           <section id="movementsModule" class="panel movements-module module-screen section" data-module="movimientos" data-section="movimientos" hidden aria-hidden="true">
             <div class="section-head">
               <div>
@@ -643,68 +659,96 @@
             <div id="movements" class="movements"></div>
           </section>
 
-        </div>
-      </section>
-
-      <div class="sale-modal-backdrop" aria-hidden="true"></div>
-      <aside id="salePanel" class="panel sale-panel module-screen section sale-drawer" data-module="venta" data-section="venta" hidden aria-hidden="true">
-        <div class="sale-drawer-handle" aria-hidden="true"></div>
-        <header class="sale-drawer-head">
-          <div>
-            <p class="eyebrow">Salida rápida</p>
-            <h2>Panel de venta</h2>
-          </div>
-        </header>
-        <div class="sale-drawer-body">
-        <div id="selectedProduct" class="empty-state">Seleccioná un producto para operar.</div>
-
-        <form id="saleForm" class="sale-form">
-          <label>
-            Cantidad
-            <input id="quantityInput" type="number" min="1" step="1" value="1" />
-          </label>
-          <label>
-            Nota
-            <textarea id="noteInput" rows="3" placeholder="Cliente, comprobante o detalle opcional"></textarea>
-          </label>
-          <button type="submit">Registrar salida</button>
-          <p id="saleMessage" class="message"></p>
-        </form>
-
-        <div class="cart-sale sales-cart-zone">
-          <section class="cart-box">
-            <div class="cart-head">
+          <!-- ═══════════════════════════════════════════════
+               MÓDULOS PLACEHOLDER
+          ═══════════════════════════════════════════════ -->
+          <section id="usersModule" class="panel placeholder-module module-screen section" data-module="usuarios" data-section="usuarios" hidden aria-hidden="true">
+            <div class="section-head">
               <div>
-                <h3>Carrito de venta</h3>
-                <span id="cartSummary">0 productos seleccionados</span>
+                <h2>Usuarios</h2>
+                <p>Administración de usuarios y permisos del sistema.</p>
               </div>
-              <button id="addSelectedToCart" class="sales-btn-compact" type="button">+ Agregar seleccionado</button>
             </div>
-            <div id="cartItems" class="cart-items">
-              <div class="empty-state">Seleccioná productos del catálogo y agregalos al carrito.</div>
-            </div>
+            <div class="empty-state">Módulo reservado para gestión de usuarios.</div>
           </section>
-          <form id="cartSaleForm" class="cart-form sales-checkout-form">
-            <label>
-              Cliente
-              <input id="cartCustomer" type="text" placeholder="Cliente opcional" />
-            </label>
-            <label>
-              Nota
-              <textarea id="cartNote" rows="2" placeholder="Observación opcional"></textarea>
-            </label>
-            <div class="cart-actions">
-              <button type="submit" class="sales-btn-confirm">Confirmar venta</button>
-              <button id="clearCartButton" class="secondary-button sales-btn-compact" type="button">Vaciar</button>
+
+          <section id="settingsModule" class="panel placeholder-module module-screen section" data-module="ajustes" data-section="ajustes" hidden aria-hidden="true">
+            <div class="section-head">
+              <div>
+                <h2>Ajustes</h2>
+                <p>Configuración general del sistema.</p>
+              </div>
             </div>
-            <p id="cartMessage" class="message"></p>
-          </form>
-        </div>
-        </div>
+            <div class="empty-state">Módulo reservado para parámetros generales.</div>
+          </section>
+
+        </div><!-- fin .workspace-scroll -->
+      </section><!-- fin .workspace -->
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PANEL DE VENTA — 3ra columna del erp-shell
+           Se muestra/oculta por CSS según data-module='venta'
+      ═══════════════════════════════════════════════════════════════════ -->
+      <aside id="salePanel" class="sale-panel">
+                    <div class="panel sale-panel">
+                      <div class="sale-drawer-body">
+                        <header class="sale-drawer-head">
+                          <div>
+                            <p class="eyebrow">Salida rápida</p>
+                            <h2>Panel de venta</h2>
+                          </div>
+                        </header>
+        
+                        <div id="selectedProduct" class="empty-state">Seleccioná un producto para operar.</div>
+        
+                        <form id="saleForm" class="sale-form">
+                          <label>
+                            Cantidad
+                            <input id="quantityInput" type="number" min="1" step="1" value="1" />
+                          </label>
+                          <label>
+                            Nota
+                            <textarea id="noteInput" rows="3" placeholder="Cliente, comprobante o detalle opcional"></textarea>
+                          </label>
+                          <button type="submit">Registrar salida</button>
+                          <p id="saleMessage" class="message"></p>
+                        </form>
+        
+                        <div class="cart-sale sales-cart-zone">
+                          <section class="cart-box">
+                            <div class="cart-head">
+                              <div>
+                                <h3>Carrito de venta</h3>
+                                <span id="cartSummary">0 productos seleccionados</span>
+                              </div>
+                              <button id="addSelectedToCart" class="sales-btn-compact" type="button">+ Agregar seleccionado</button>
+                            </div>
+                            <div id="cartItems" class="cart-items">
+                              <div class="empty-state">Seleccioná productos y agregalos al carrito.</div>
+                            </div>
+                          </section>
+                          <form id="cartSaleForm" class="cart-form sales-checkout-form">
+                            <label>
+                              Cliente
+                              <input id="cartCustomer" type="text" placeholder="Cliente opcional" />
+                            </label>
+                            <label>
+                              Nota
+                              <textarea id="cartNote" rows="2" placeholder="Observación opcional"></textarea>
+                            </label>
+                            <div class="cart-actions">
+                              <button type="submit" class="sales-btn-confirm">Confirmar venta</button>
+                              <button id="clearCartButton" class="secondary-button sales-btn-compact" type="button">Vaciar</button>
+                            </div>
+                            <p id="cartMessage" class="message"></p>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
       </aside>
     </main>
 
-    <script src="/app.js?v=20260523-4"></script>
+    <script src="/app.js?v=20260526-1"></script>
     <script>
       window.setTimeout(function () {
         document.body.classList.remove("booting");
